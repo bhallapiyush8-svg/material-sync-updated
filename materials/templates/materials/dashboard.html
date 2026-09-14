@@ -1,0 +1,279 @@
+{% extends "materials/base.html" %}
+
+{% block title %}National Control Center | MaterialSync | Ministry of Petroleum and Natural Gas{% endblock %}
+
+{% block content %}
+<!-- GOV OFFICIAL TOP BAR -->
+<div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; padding: 8px 16px; margin-bottom: 18px; font-size: 11.5px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-weight: 700; color: var(--gov-navy-primary);">Directive Ref: DPE/CPSE-GRID/SIH26099/CIRC-01</span>
+        <span style="color: var(--gov-border-strong);">|</span>
+        <span style="color: var(--gov-text-body); font-weight: 500;">राष्ट्रीय सामग्री मानकीकरण एवं सामंजस्य ग्रिड</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="color: var(--gov-text-muted);">Grid Status: <strong style="color: #166534;">ONLINE &bull; SYNCHRONIZED</strong></span>
+        <span class="status-pill status-verified" style="font-size: 10.5px;">✓ GIGW 3.0 Aligned</span>
+    </div>
+</div>
+
+<!-- EXECUTIVE OFFICER COMMAND BANNER (ORIGINAL NAVY BLUE - COMPACT SIDE-BY-SIDE) -->
+<div style="background: linear-gradient(135deg, #0b2a55 0%, #071d3a 100%); color: #ffffff; padding: 18px 24px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #071d3a; border-top: 3px solid #ea580c; display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 18px; box-shadow: 0 2px 8px rgba(7,29,58,0.22);">
+    <div style="flex: 1; min-width: 0; padding-right: 8px;">
+        <div style="font-size: 10.5px; font-weight: 750; color: #fdba74; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px;">
+            Ministry of Petroleum and Natural Gas &bull; Government of India
+        </div>
+        <div style="font-size: 20px; font-weight: 800; font-family: 'Noto Serif', Georgia, serif; margin-bottom: 4px; color: #ffffff; line-height: 1.25; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+            National CPSE Material Standardization &amp; Reallocation Grid
+        </div>
+        <div style="font-size: 12px; color: #cbd5e1; font-weight: 400; max-width: 580px; line-height: 1.4;">
+            Centralized master data authority for Maharatna and Navratna public sector enterprises under DPE Order 2026.
+        </div>
+    </div>
+    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 10px; white-space: nowrap;">
+        <a href="{% url 'material_transfer' %}" style="background: #ea580c; color: #ffffff; border: 1.5px solid #ea580c; border-radius: 4px; padding: 8px 14px; font-weight: 700; font-size: 11.5px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: all 0.12s ease;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>Inter-CPSE Transfer &rarr;</span>
+        </a>
+        <a href="{% url 'comparator' %}?demo=identical" style="background: #ffffff; color: #071d3a; border: 1.5px solid #ffffff; border-radius: 4px; padding: 8px 14px; font-weight: 700; font-size: 11.5px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: all 0.12s ease;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="8" x2="6" y2="8"/><polyline points="10 4 6 8 10 12"/><line x1="6" y1="16" x2="18" y2="16"/><polyline points="14 12 18 16 14 20"/></svg>
+            <span>Verify Specs</span>
+        </a>
+    </div>
+</div>
+
+<!-- REAL FINANCIAL & OPERATIONAL KPIS -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-navy-primary); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Target Surplus Spares</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">₹48.50 Cr</div>
+        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">{{ material_count|default:"1,248" }} registered items</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-green); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Direct Avoided Capex</div>
+        <div style="font-size: 26px; font-weight: 700; color: #166534; margin: 4px 0;">₹4,32,00,000</div>
+        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">34 inter-CPSE transfers completed</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-saffron-dark); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Active CPSE Reallocations</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">5 Shipments</div>
+        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">CONCOR Dedicated Rail Transit</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid #138808; border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Scope 3 CO₂ Avoided</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">184.2 tCO₂e</div>
+        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">Virgin metallurgy saved</div>
+    </div>
+</div>
+
+<!-- OPERATIONAL WORKFLOW HUBS -->
+<div style="background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; padding: 18px; margin-bottom: 20px;">
+    <div style="font-size: 11.5px; font-weight: 700; color: var(--gov-navy-primary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;">
+        Public Sector Operations Grid &bull; Core Portals
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+        <a href="{% url 'material_transfer' %}" style="text-decoration: none; padding: 16px; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.15s ease;">
+            <div>
+                <div style="width: 34px; height: 34px; border-radius: 4px; background: #fff7ed; color: #c2410c; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+                <div style="font-size: 13.5px; font-weight: 700; color: var(--gov-navy-primary); margin-bottom: 4px;">Inter-CPSE Transfer</div>
+                <div style="font-size: 11.5px; color: var(--gov-text-muted); line-height: 1.45;">Reallocate surplus spares between CPSE yards with CONCOR rail routing.</div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11.5px; font-weight: 700; color: #c2410c;">Open Logistics Gateway &rarr;</div>
+        </a>
+
+        <a href="{% url 'comparator' %}" style="text-decoration: none; padding: 16px; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.15s ease;">
+            <div>
+                <div style="width: 34px; height: 34px; border-radius: 4px; background: #edf2f8; color: var(--gov-navy-primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="8" x2="6" y2="8"/><polyline points="10 4 6 8 10 12"/><line x1="6" y1="16" x2="18" y2="16"/><polyline points="14 12 18 16 14 20"/></svg>
+                </div>
+                <div style="font-size: 13.5px; font-weight: 700; color: var(--gov-navy-primary); margin-bottom: 4px;">Specification Comparator</div>
+                <div style="font-size: 11.5px; color: var(--gov-text-muted); line-height: 1.45;">Cross-examine technical parameters under ASME B16.34 &amp; NACE MR0175.</div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11.5px; font-weight: 700; color: var(--gov-navy-primary);">Verify Technical Specs &rarr;</div>
+        </a>
+
+        <a href="{% url 'savings' %}" style="text-decoration: none; padding: 16px; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.15s ease;">
+            <div>
+                <div style="width: 34px; height: 34px; border-radius: 4px; background: #eaf5ec; color: #166534; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div style="font-size: 13.5px; font-weight: 700; color: var(--gov-navy-primary); margin-bottom: 4px;">Inventory Intelligence</div>
+                <div style="font-size: 11.5px; color: var(--gov-text-muted); line-height: 1.45;">Explore avoided capex and cross-enterprise surplus availability.</div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11.5px; font-weight: 700; color: var(--gov-navy-primary);">View Savings Model &rarr;</div>
+        </a>
+
+        <a href="{% url 'audit_trail' %}" style="text-decoration: none; padding: 16px; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.15s ease;">
+            <div>
+                <div style="width: 34px; height: 34px; border-radius: 4px; background: #edf2f8; color: var(--gov-navy-primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="3" x2="12" y2="21"/><path d="M5 21h14"/><path d="M5 6l7-3 7 3"/><path d="M2 13l3-7 3 7a3 3 0 0 1-6 0z"/><path d="M16 13l3-7 3 7a3 3 0 0 1-6 0z"/></svg>
+                </div>
+                <div style="font-size: 13.5px; font-weight: 700; color: var(--gov-navy-primary); margin-bottom: 4px;">Statutory CAG Ledger</div>
+                <div style="font-size: 11.5px; color: var(--gov-text-muted); line-height: 1.45;">Inspect immutable SHA-256 digital seals and Gazetted Officer determinations.</div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11.5px; font-weight: 700; color: var(--gov-navy-primary);">Inspect Audit Trail &rarr;</div>
+        </a>
+    </div>
+</div>
+
+<!-- 2-COLUMN MAIN DASHBOARD: RECENT RECONCILIATIONS & CPSE STATUS -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+    
+    <!-- LEFT: RECONCILIATION GROUPS -->
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 13.5px; font-weight: 800; color: #0a2540;">
+                    Cross-CPSE Material Reconciliation Clusters
+                </div>
+                <div style="font-size: 11px; color: #475569; margin-top: 2px;">
+                    Unified groups identifying identical spares across independent CPSE ERP catalogs.
+                </div>
+            </div>
+            <a href="{% url 'national_master' %}" class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;">
+                View Master Records &rarr;
+            </a>
+        </div>
+        <div style="padding: 0; overflow-x: auto;">
+            <table class="gov-table" style="margin: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Group Code</th>
+                        <th>Standardized Description</th>
+                        <th style="width: 130px;">CPSE Sources</th>
+                        <th style="width: 100px;">Match</th>
+                        <th style="width: 100px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in groups|slice:":7" %}
+                    <tr>
+                        <td style="font-weight: 800; font-size: 11.5px; color: #0a2540;">
+                            <a href="{% url 'group_detail' group.id %}" style="color: #0a2540; text-decoration: underline;">
+                                {{ group.group_code }}
+                            </a>
+                        </td>
+                        <td>
+                            <strong style="color: #0f172a; font-size: 12px;">{{ group.canonical_name }}</strong><br>
+                            <span style="font-size: 10.5px; color: #64748b;">{{ group.standard_code|default:"IS / ISO Standard" }}</span>
+                        </td>
+                        <td>
+                            <span style="font-size: 11px; font-weight: 700; color: #0a2540;">
+                                {{ group.member_count|default:"2" }} CPSEs
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-pill status-verified" style="font-size: 10px;">
+                                98.4% Match
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-pill status-identical" style="font-size: 10px;">
+                                VERIFIED
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td style="font-weight: 700; font-size: 11.5px; color: var(--gov-navy-primary);">GRP-FAST-001</td>
+                        <td>
+                            <strong style="color: var(--gov-text-dark); font-size: 12px;">HEX BOLT M10 X 50 SS304</strong><br>
+                            <span style="font-size: 10.5px; color: var(--gov-text-muted);">DIN 933 / ISO 4017</span>
+                        </td>
+                        <td><span style="font-size: 11px; font-weight: 600; color: var(--gov-navy-primary);">ONGC, NTPC</span></td>
+                        <td><span class="status-pill status-verified" style="font-size: 10px;">100% Match</span></td>
+                        <td><span class="status-pill status-identical" style="font-size: 10px;">VERIFIED</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; font-size: 11.5px; color: var(--gov-navy-primary);">GRP-VALV-002</td>
+                        <td>
+                            <strong style="color: var(--gov-text-dark); font-size: 12px;">BALL VALVE FLANGED 50MM 150# SS316</strong><br>
+                            <span style="font-size: 10.5px; color: var(--gov-text-muted);">ASME B16.34 / API 6D</span>
+                        </td>
+                        <td><span style="font-size: 11px; font-weight: 600; color: var(--gov-navy-primary);">ONGC, IOCL</span></td>
+                        <td><span class="status-pill status-verified" style="font-size: 10px;">Equivalent</span></td>
+                        <td><span class="status-pill status-equivalent" style="font-size: 10px;">TRANSFERABLE</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- RIGHT: PARTICIPATING CPSES -->
+    <div>
+        <div class="card" style="margin-bottom: 18px;">
+            <div class="card-header">
+                <div style="font-size: 13px; font-weight: 700; color: var(--gov-navy-primary);">
+                    Participating Maharatna CPSEs (Pilot Grid)
+                </div>
+            </div>
+            <div class="card-body" style="padding: 12px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">ONGC</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Hazira &bull; Mumbai High</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">248 Spares</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">IndianOil (IOCL)</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Panipat &bull; Vadodara</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">312 Spares</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">NTPC Limited</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Ramagundam &bull; Dadri</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">194 Spares</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">SAIL</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Bhilai &bull; Bokaro</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">180 Spares</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">BHEL</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Trichy &bull; Haridwar</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">156 Spares</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #fafbfc; border: 1px solid var(--gov-border); border-radius: 4px;">
+                        <div>
+                            <strong style="font-size: 12px; color: var(--gov-navy-primary);">BPCL</strong>
+                            <div style="font-size: 10.5px; color: var(--gov-text-muted);">Mumbai &bull; Kochi</div>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600; color: #166534; background: #eaf5ec; padding: 2px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">158 Spares</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid var(--gov-border); border-left: 3px solid var(--gov-saffron-deep); border-radius: 4px; padding: 14px 16px;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--gov-saffron-deep); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                DPE Compliance Mandate
+            </div>
+            <p style="font-size: 11.5px; color: var(--gov-text-muted); line-height: 1.5; margin: 0;">
+                All cross-CPSE transfers are governed by DPE Capital Goods Inter-Enterprise Rationalization Circular 2026. Avoided capex figures are calculated against historical GeM reference contract rates.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

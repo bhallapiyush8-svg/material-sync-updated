@@ -1,0 +1,10 @@
+Django
+djangorestframework
+scikit-learn
+scipy
+pandas
+numpy
+Pillow
+PyMuPDF
+gunicorn
+whitenoise

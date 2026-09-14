@@ -1,0 +1,362 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Engineering Review Workbench | MaterialSync{% endblock %}
+
+{% block content %}
+
+{% if confirmation %}
+<!-- =============================================
+     POST-DECISION: CONFIRMATION SCREEN
+     ============================================= -->
+<div style="max-width:760px;margin:0 auto;padding:20px 0;">
+
+    <div style="text-align:center;margin-bottom:24px;">
+        <div style="display:inline-flex;align-items:center;gap:10px;padding:8px 20px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:0.8px;
+            {% if confirmation.action == 'APPROVE' %}background:#f0fdf4;color:#166534;border:1px solid #86efac;
+            {% elif confirmation.action == 'REJECT' %}background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;
+            {% else %}background:#fffbeb;color:#92400e;border:1px solid #fcd34d;{% endif %}">
+            {% if confirmation.action == 'APPROVE' %}&#10003; DECISION RECORDED — APPROVED
+            {% elif confirmation.action == 'REJECT' %}&#10007; DECISION RECORDED — REJECTED
+            {% else %}&#9998; DECISION RECORDED — MODIFICATION REQUESTED{% endif %}
+        </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid {% if confirmation.action == 'APPROVE' %}var(--status-green){% elif confirmation.action == 'REJECT' %}var(--status-red){% else %}var(--status-amber){% endif %};">
+        <div class="card-header">
+            <div class="card-title"><span>&#9670;</span><span>National Material Mapping Record</span></div>
+            <span class="status-pill {% if confirmation.action == 'APPROVE' %}status-approved{% elif confirmation.action == 'REJECT' %}status-rejected{% else %}status-pending{% endif %}">
+                {{ confirmation.action }}
+            </span>
+        </div>
+        <div class="card-body" style="padding:20px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">Review ID</div>
+                    <div style="font-family:monospace;font-weight:800;color:var(--gov-navy-900);font-size:13px;">{{ confirmation.review_id }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">Timestamp</div>
+                    <div style="font-weight:700;color:var(--gov-navy-900);font-size:12px;">{{ confirmation.timestamp }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">Approved By</div>
+                    <div style="font-weight:700;color:var(--gov-navy-900);">{{ confirmation.engineer }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">Organisation</div>
+                    <div style="font-weight:700;color:var(--gov-navy-900);">{{ confirmation.org }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">Role</div>
+                    <div style="font-weight:600;color:var(--gov-slate-700);">{{ confirmation.role }}</div>
+                </div>
+                <div>
+                    <div style="font-size:10px;color:var(--gov-slate-500);margin-bottom:3px;">System Classification</div>
+                    <div style="font-weight:700;color:var(--gov-navy-900);">{{ confirmation.classification }}</div>
+                </div>
+            </div>
+
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:16px;">
+                <div style="font-size:10px;font-weight:700;color:var(--gov-slate-500);margin-bottom:6px;">MATERIALS REVIEWED</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+                    <div><span style="color:var(--gov-slate-500);">A: </span><strong>{{ confirmation.material_a }}</strong></div>
+                    <div><span style="color:var(--gov-slate-500);">B: </span><strong>{{ confirmation.material_b }}</strong></div>
+                </div>
+            </div>
+
+            {% if confirmation.reason_code %}
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 16px;margin-bottom:16px;">
+                <div style="font-size:10px;font-weight:700;color:var(--gov-slate-500);margin-bottom:4px;">DECISION BASIS</div>
+                <div style="font-size:12px;color:var(--gov-slate-800);">{{ confirmation.reason_code }}</div>
+                {% if confirmation.comments %}<div style="font-size:11.5px;color:var(--gov-slate-600);margin-top:4px;font-style:italic;">{{ confirmation.comments }}</div>{% endif %}
+            </div>
+            {% endif %}
+
+            <!-- AUDIT CHAIN -->
+            <div style="margin-top:18px;">
+                <div style="font-size:10.5px;font-weight:800;color:var(--gov-navy-900);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Governance Audit Trail</div>
+                <div style="display:flex;align-items:center;gap:0;">
+                    <div style="display:flex;align-items:center;gap:0;flex:1;">
+                        <div style="text-align:center;flex:1;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--gov-navy-700);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">&#10003;</div>
+                            <div style="font-size:9.5px;color:var(--gov-slate-600);margin-top:4px;line-height:1.3;">Match Recommended</div>
+                        </div>
+                        <div style="height:2px;background:var(--gov-navy-700);flex:1;margin-top:-12px;"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0;flex:1;">
+                        <div style="text-align:center;flex:1;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--gov-navy-700);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">&#10003;</div>
+                            <div style="font-size:9.5px;color:var(--gov-slate-600);margin-top:4px;line-height:1.3;">Engineering Review</div>
+                        </div>
+                        <div style="height:2px;background:var(--gov-navy-700);flex:1;margin-top:-12px;"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0;flex:1;">
+                        <div style="text-align:center;flex:1;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--gov-navy-700);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">&#10003;</div>
+                            <div style="font-size:9.5px;color:var(--gov-slate-600);margin-top:4px;line-height:1.3;">Decision Recorded</div>
+                        </div>
+                        <div style="height:2px;background:var(--gov-navy-700);flex:1;margin-top:-12px;"></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0;flex:1;">
+                        <div style="text-align:center;flex:1;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--gov-navy-700);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;">&#10003;</div>
+                            <div style="font-size:9.5px;color:var(--gov-slate-600);margin-top:4px;line-height:1.3;">Audit Logged</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:20px;">
+        <a href="{% url 'comparator' %}" class="btn btn-secondary">&#8592; Back to Comparator</a>
+        <a href="{% url 'audit_trail' %}" class="btn btn-secondary">View Audit Trail</a>
+        <a href="{% url 'engineer_logout' %}" class="btn btn-secondary" style="margin-left:auto;">Sign out</a>
+    </div>
+</div>
+
+{% else %}
+<!-- =============================================
+     MAIN WORKBENCH SCREEN
+     ============================================= -->
+
+<!-- HEADER -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>Ministry of Petroleum and Natural Gas &bull; Government of India</span>
+            <span>&bull;</span>
+            <span>File No. {{ last_comparison.file_no|default:"DPE/CPSE-RECON/2026/SCRUTINY" }}</span>
+        </div>
+        <h1 class="page-title">Class-I Engineering Scrutiny &amp; Verification Workbench</h1>
+        <p class="page-subtitle">
+            Statutory Determination Record for Inter-CPSE Material Master Harmonization. Machine-generated semantic and attribute scores are advisory; the designated discipline engineer's technical concurrence constitutes the legal authorization.
+        </p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        <div style="background:#0a2540;color:#fff;padding:6px 14px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:0.5px;border:1px solid #071d3a;">
+            Docket: {{ review_id }}
+        </div>
+        <span class="status-pill status-amber" style="font-size:10px;">Pending Competent Determination</span>
+        <div style="font-size:11px;color:#334155;font-weight:600;">
+            Authorised Officer: <strong>{{ engineer_employee_id }}</strong> &bull; {{ engineer_org }} &bull; {{ engineer_role }}
+        </div>
+    </div>
+</div>
+
+<!-- 1-CLICK SCRUTINY TEST CASES SWITCHER -->
+<div class="card" style="margin-bottom: 20px; border-left: 4px solid #ea580c; border: 1.5px solid #cbd5e1; border-left-width: 4px;">
+    <div style="padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; background: #fff7ed;">
+        <div>
+            <div style="font-size: 11px; font-weight: 800; color: #c2410c; text-transform: uppercase; letter-spacing: 0.5px;">1-Click SIH Pitch Scrutiny Dockets:</div>
+            <div style="font-size: 11.5px; color: #78350f;">Select an inter-CPSE case to inspect technical parameters and record your official engineering determination.</div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="{% url 'review_workbench' %}?demo=equivalent" class="btn btn-secondary" style="font-size:11.5px; padding:6px 12px; {% if last_comparison.scenario == 'equivalent' %}background:#0a2540 !important; color:#ffffff !important; border-color:#0a2540 !important;{% endif %}">
+                ⚙️ Case 1: ASME vs DIN Valve (Equivalent)
+            </a>
+            <a href="{% url 'review_workbench' %}?demo=different" class="btn btn-secondary" style="font-size:11.5px; padding:6px 12px; {% if last_comparison.scenario == 'different' %}background:#991b1b !important; color:#ffffff !important; border-color:#991b1b !important;{% endif %}">
+                ⚠️ Case 2: Sour Gas Safety Block (Prohibited)
+            </a>
+            <a href="{% url 'review_workbench' %}?demo=identical" class="btn btn-secondary" style="font-size:11.5px; padding:6px 12px; {% if last_comparison.scenario == 'identical' %}background:#14532d !important; color:#ffffff !important; border-color:#14532d !important;{% endif %}">
+                ✓ Case 3: ASTM A105 Flanges (100% Identical)
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if not last_comparison %}
+<!-- NO COMPARISON IN SESSION -->
+<div class="card">
+    <div class="card-body" style="text-align:center;padding:48px 24px;">
+        <div style="font-size:15px;font-weight:800;color:#0a2540;margin-bottom:8px;">No material dossier currently loaded</div>
+        <div style="font-size:12.5px;color:#475569;margin-bottom:20px;">
+            Choose one of the test cases above or compare materials in the specification comparator.
+        </div>
+        <div style="display:flex; justify-content:center; gap:12px;">
+            <a href="{% url 'review_workbench' %}?demo=equivalent" class="btn btn-saffron">Load Benchmark Equivalent Case &rarr;</a>
+            <a href="{% url 'comparator' %}" class="btn btn-secondary">Go to Specification Comparator</a>
+        </div>
+    </div>
+</div>
+
+{% else %}
+{% with c=last_comparison %}
+
+<!-- MATERIAL PAIR PANELS -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+
+    <!-- SOURCE MATERIAL -->
+    <div class="card" style="border-top:3px solid var(--gov-navy-600);">
+        <div class="card-header">
+            <div class="card-title"><span>A</span><span>Source material</span></div>
+            <span style="font-size:10px;color:var(--gov-slate-500);">{{ c.source_a|default:"Material A" }}</span>
+        </div>
+        <div class="card-body">
+            <div style="font-size:14px;font-weight:800;color:var(--gov-navy-950);line-height:1.4;margin-bottom:10px;">{{ c.material_a }}</div>
+        </div>
+    </div>
+
+    <!-- CANDIDATE MATERIAL -->
+    <div class="card" style="border-top:3px solid var(--gov-slate-500);">
+        <div class="card-header">
+            <div class="card-title"><span>B</span><span>Candidate material</span></div>
+            <span style="font-size:10px;color:var(--gov-slate-500);">{{ c.source_b|default:"Material B" }}</span>
+        </div>
+        <div class="card-body">
+            <div style="font-size:14px;font-weight:800;color:var(--gov-navy-950);line-height:1.4;margin-bottom:10px;">{{ c.material_b }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- DECISION EVIDENCE -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+        <div class="card-title"><span>&#9670;</span><span>Decision evidence</span></div>
+        <span class="status-pill {% if c.classification == 'IDENTICAL' %}status-approved{% elif c.classification == 'EQUIVALENT' %}status-verified{% elif c.classification == 'DIFFERENT' %}status-rejected{% else %}status-pending{% endif %}">
+            System: {{ c.classification }}
+        </span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);">
+        <div style="padding:14px 16px;border-right:1px solid var(--border);text-align:center;">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-500);letter-spacing:0.6px;margin-bottom:4px;">Text similarity</div>
+            <div style="font-size:24px;font-weight:900;color:var(--gov-navy-950);">{{ c.semantic_score }}%</div>
+            <div style="font-size:9.5px;color:var(--gov-slate-400);">TF-IDF cosine</div>
+        </div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border);text-align:center;">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-500);letter-spacing:0.6px;margin-bottom:4px;">Attribute match</div>
+            <div style="font-size:24px;font-weight:900;color:{% if c.attribute_score >= 80 %}var(--status-green){% elif c.attribute_score >= 50 %}var(--status-amber){% else %}var(--status-red){% endif %};">{{ c.attribute_score }}%</div>
+            <div style="font-size:9.5px;color:var(--gov-slate-400);">Engineering rules</div>
+        </div>
+        <div style="padding:14px 16px;border-right:1px solid var(--border);text-align:center;">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-500);letter-spacing:0.6px;margin-bottom:4px;">Critical mismatch</div>
+            <div style="font-size:20px;font-weight:900;margin-top:4px;">
+                {% if c.critical_mismatch %}<span style="color:var(--status-red);">YES</span>{% else %}<span style="color:var(--status-green);">None</span>{% endif %}
+            </div>
+            <div style="font-size:9.5px;color:var(--gov-slate-400);">Safety-critical check</div>
+        </div>
+        <div style="padding:14px 16px;text-align:center;">
+            <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-500);letter-spacing:0.6px;margin-bottom:4px;">Final score</div>
+            <div style="font-size:24px;font-weight:900;color:var(--gov-navy-950);">{{ c.final_score }}%</div>
+            <div style="font-size:9.5px;color:var(--gov-slate-400);">Combined confidence</div>
+        </div>
+    </div>
+
+    <!-- SYSTEM RECOMMENDATION -->
+    <div style="padding:14px 18px;background:#f8fafc;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div>
+            <span style="font-size:10px;font-weight:700;color:var(--gov-slate-500);text-transform:uppercase;letter-spacing:0.5px;">System recommendation: </span>
+            <span style="font-size:13px;font-weight:800;color:var(--gov-navy-950);">{{ c.classification }}</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--gov-slate-500);">The system recommendation is decision support. Your engineering judgement is the final authority.</div>
+    </div>
+</div>
+
+{% if c.explanation_text %}
+<!-- SYSTEM RATIONALE -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+        <div class="card-title"><span>&#9670;</span><span>System rationale</span></div>
+    </div>
+    <div class="card-body" style="font-size:12.5px;color:var(--gov-slate-700);line-height:1.7;">
+        {% for line in c.explanation_text %}<p style="margin-bottom:4px;">&bull; {{ line }}</p>{% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if c.attribute_rows %}
+<!-- ATTRIBUTE TABLE -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+        <div class="card-title"><span>&#9670;</span><span>Attribute comparison ({{ c.summary.matched_count }} of {{ c.summary.total_attributes }} matched)</span></div>
+    </div>
+    <div style="padding:0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Material A</th>
+                    <th>Material B</th>
+                    <th style="width:100px;">Importance</th>
+                    <th style="width:90px;">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in c.attribute_rows %}
+                <tr {% if row.status == 'CONFLICT' and row.importance == 'CRITICAL' %}style="background:#fef2f2;"{% endif %}>
+                    <td style="font-weight:700;font-size:12px;">{{ row.name }}</td>
+                    <td style="font-size:12px;">{{ row.value_a }}</td>
+                    <td style="font-size:12px;">{{ row.value_b }}</td>
+                    <td>
+                        {% if row.importance == 'CRITICAL' %}
+                            <span style="font-size:9.5px;font-weight:700;color:var(--status-red);text-transform:uppercase;">Critical</span>
+                        {% else %}
+                            <span style="font-size:9.5px;color:var(--gov-slate-500);">Normal</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row.status == 'MATCHED' %}
+                            <span class="status-pill status-approved" style="font-size:9.5px;">Matched</span>
+                        {% else %}
+                            <span class="status-pill status-rejected" style="font-size:9.5px;">Conflict</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- ENGINEER DECISION FORM -->
+<div class="card" style="border-top:3px solid var(--gov-navy-800);">
+    <div class="card-header">
+        <div class="card-title"><span>&#9670;</span><span>Engineer decision</span></div>
+        <span style="font-size:10.5px;color:var(--gov-slate-500);">{{ engineer_employee_id }} &bull; {{ engineer_org }} &bull; {{ engineer_role }}</span>
+    </div>
+    <div class="card-body" style="padding:22px;">
+        <form method="POST" action="{% url 'review_workbench' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Decision basis <span style="color:var(--status-red)">*</span></label>
+                <select name="reason_code" class="form-control" required>
+                    <option value="">— Select engineering reason —</option>
+                    {% for reason in reason_choices %}
+                    <option value="{{ reason }}">{{ reason }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Additional comments (optional)</label>
+                <textarea name="comments" class="form-control" rows="3" placeholder="Provide additional engineering justification if needed..."></textarea>
+            </div>
+
+            <!-- DECISION BUTTONS -->
+            <div style="display:flex;gap:12px;padding-top:14px;border-top:1px solid var(--border);margin-top:8px;">
+                <button type="submit" name="action" value="APPROVE" class="btn btn-primary" style="background:var(--status-green);border-color:var(--status-green);font-weight:750;">
+                    &#10003; CONCUR &amp; APPROVE — Assign National Master ID
+                </button>
+                <button type="submit" name="action" value="REJECT" class="btn btn-primary" style="background:var(--status-red);border-color:var(--status-red);font-weight:750;">
+                    &#10007; REJECT SUBSTITUTION — Prohibit Inter-CPSE Transfer
+                </button>
+                <button type="submit" name="action" value="MODIFY" class="btn btn-secondary" style="font-weight:700;">
+                    &#9998; REFER TO COMMITTEE — Technical Query
+                </button>
+                <a href="{% url 'comparator' %}" class="btn btn-secondary" style="margin-left:auto;">&#8592; Back</a>
+            </div>
+
+            <div style="margin-top:12px;font-size:10px;color:var(--gov-slate-500);line-height:1.5;">
+                <strong>Official Audit Notice:</strong> This determination will be recorded under your Employee ID ({{ engineer_employee_id }}), parent organisation ({{ engineer_org }}), and authenticated timestamp into the permanent Inter-CPSE Governance Ledger. Machine-generated scores are advisory; the Competent Technical Authority sign-off constitutes final authorization.
+            </div>
+        </form>
+    </div>
+</div>
+{% endwith %}
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Advanced Material Intelligence Suite | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>✦</span>
+            <span>Deep Tech Modules &bull; Advanced CPSE Intelligence</span>
+        </div>
+        <h1 class="page-title">Advanced Material Intelligence Suite</h1>
+        <p class="page-subtitle">
+            Explore advanced AI, engineering safety, circular economy, price variance, and 3D geometric matching modules built for the Smart India Hackathon.
+        </p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <span class="status-pill status-verified" style="font-size: 11px; padding: 4px 10px;">7 Advanced Modules Active</span>
+    </div>
+</div>
+
+<!-- MODULE GRID -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;">
+    
+    <!-- 1. COMPLIANCE TWIN -->
+    <div class="card" style="border-top: 3px solid var(--red-blocked); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">🛡️</span>
+                <span class="status-pill status-blocked">Safety-Critical</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">Digital Compliance Twin</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Enforces statutory engineering codes (NACE MR0175, ASME B16.34, API 6D). Evaluates whether a proposed substitution will cause plant failures in sour gas, high pressure, or cryogenic service.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'compliance' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch Compliance Twin &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. SAVINGS SIMULATOR -->
+    <div class="card" style="border-top: 3px solid var(--green-verified); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">₹</span>
+                <span class="status-pill status-approved">₹4.32 Cr Savings</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">Financial Savings & Carbon Simulator</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Simulates dynamic inventory sharing ("Transfer instead of Buy") between ONGC, NTPC, IOCL, SAIL, BHEL, and BPCL with transparent freight logistics and Scope 3 CO₂ avoidance models.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'savings' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch Savings Simulator &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 3. PROCUREMENT INTEL -->
+    <div class="card" style="border-top: 3px solid var(--amber-warning); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">📈</span>
+                <span class="status-pill status-warning">Price Variance</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">Procurement Intelligence & Price Variance</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Cross-references historical CPSE purchase order rates for identical normalized specifications to uncover up to 153% price disparities and enable unified bulk rate contracts.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'procurement' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch Price Intelligence &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 4. CAD 3D MATCHER -->
+    <div class="card" style="border-top: 3px solid var(--blue-primary); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">◬</span>
+                <span class="status-pill status-equivalent">3D Spatial</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">CAD & 3D Geometry Matcher</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Compares spatial B-Rep geometries, boundary point-clouds, and mounting hole pitch circle diameters for complex mechanical components like flanges, impellers, and pipe bends.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'cad_matcher' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch CAD Matcher &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 5. MULTILINGUAL INGESTION -->
+    <div class="card" style="border-top: 3px solid var(--saffron); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">🌐</span>
+                <span class="status-pill status-approved">Indic Languages</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">Multilingual Ingestion & Indic Normalization</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Parses vernacular warehouse records written in Hindi, Tamil, Telugu, Gujarati, and Marathi and translates them into structured ISO/ASTM engineering attribute schemas.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'multilingual' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch Multilingual Engine &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 6. DATA LINEAGE -->
+    <div class="card" style="border-top: 3px solid var(--navy-800); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 20px;">⑂</span>
+                <span class="status-pill status-equivalent">Traceability</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 850; color: var(--navy-900);">Data Lineage & Provenance Graph</div>
+            <p style="font-size: 11.5px; color: var(--slate-600); margin: 6px 0 14px; line-height: 1.5;">
+                Visualizes the complete convergence journey of disparate legacy CPSE codes into canonical National Material Master records with cryptographic SHA-256 validation.
+            </p>
+        </div>
+        <div style="padding: 12px 16px; background: #fafbfc; border-top: 1px solid var(--border);">
+            <a href="{% url 'data_lineage' %}" class="btn btn-primary btn-sm" style="width: 100%;">
+                <span>Launch Lineage Graph &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

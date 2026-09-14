@@ -1,0 +1,122 @@
+{% extends "materials/base.html" %}
+
+{% block title %}{{ material.material_code }} | Source Material Detail | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>📦</span>
+            <span>Source CPSE Catalogue Record &bull; {{ material.cpse.code }}</span>
+        </div>
+        <h1 class="page-title">{{ material.material_code }}</h1>
+        <p class="page-subtitle">
+            {{ material.description }}
+        </p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <a href="{% url 'source_catalogue' %}" class="btn btn-secondary btn-sm">&larr; Back to Catalogue</a>
+    </div>
+</div>
+
+<!-- ITEM ATTRIBUTES CARD -->
+<div class="card" style="border-top: 3px solid var(--blue-primary); margin-bottom: 22px;">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📋</span>
+            <span>Material Metadata & Extracted Attributes</span>
+        </div>
+        <span style="font-weight: 850; color: var(--navy-900); padding: 2px 8px; background: var(--blue-soft); border-radius: 3px;">
+            {{ material.cpse.name }}
+        </span>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 14px;">
+            <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-500);">CPSE Origin</div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--navy-900); margin-top: 2px;">{{ material.cpse.code }}</div>
+            </div>
+            <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-500);">Inventory Unit</div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--navy-900); margin-top: 2px;">{{ material.unit|default:"NOS" }}</div>
+            </div>
+            <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-500);">Harmonized Matches</div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--green-verified); margin-top: 2px;">{{ matches.count }} Pairs</div>
+            </div>
+            <div style="padding: 10px 12px; background: var(--slate-50); border: 1px solid var(--border); border-radius: var(--radius-sm);">
+                <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-500);">National Master Links</div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--blue-primary); margin-top: 2px;">{{ national_mappings.count }} Mapped</div>
+            </div>
+        </div>
+
+        <div style="padding: 12px; background: #fafbfc; border: 1px solid var(--border); border-radius: var(--radius-md);">
+            <div style="font-size: 10px; font-weight: 850; text-transform: uppercase; color: var(--slate-500); margin-bottom: 4px;">Normalized Token Representation</div>
+            <div style="font-family: monospace; font-size: 12.5px; color: var(--navy-900); font-weight: 750;">
+                {{ material.normalized_description|default:material.description }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MATCHES LIST -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>⇄</span>
+            <span>Harmonization Matches Across Other CPSEs</span>
+        </div>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 140px;">Matched Item Code</th>
+                    <th style="width: 100px;">CPSE</th>
+                    <th>Matched Description</th>
+                    <th style="width: 80px;">Semantic</th>
+                    <th style="width: 80px;">Attribute</th>
+                    <th style="width: 80px;">Final</th>
+                    <th style="width: 100px;">Classification</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in matches %}
+                <tr>
+                    <td>
+                        <span class="code-snippet" style="font-weight: 750;">
+                            {% if m.material_a == material %}{{ m.material_b.material_code }}{% else %}{{ m.material_a.material_code }}{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 800; font-size: 10.5px;">
+                            {% if m.material_a == material %}{{ m.material_b.cpse.code }}{% else %}{{ m.material_a.cpse.code }}{% endif %}
+                        </span>
+                    </td>
+                    <td style="font-size: 11.5px;">
+                        {% if m.material_a == material %}{{ m.material_b.description }}{% else %}{{ m.material_a.description }}{% endif %}
+                    </td>
+                    <td>{% widthratio m.semantic_score 1 100 %}%</td>
+                    <td>{% widthratio m.attribute_score 1 100 %}%</td>
+                    <td style="font-weight: 800; color: var(--navy-900);">{% widthratio m.final_score 1 100 %}%</td>
+                    <td>
+                        {% if m.classification == 'IDENTICAL' %}
+                            <span class="status-pill status-verified">{{ m.classification }}</span>
+                        {% elif m.classification == 'EQUIVALENT' %}
+                            <span class="status-pill status-equivalent">{{ m.classification }}</span>
+                        {% else %}
+                            <span class="status-pill status-different">{{ m.classification }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 20px; color: var(--slate-500);">No match records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

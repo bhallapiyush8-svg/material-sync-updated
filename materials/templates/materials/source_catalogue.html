@@ -1,0 +1,127 @@
+{% extends "materials/base.html" %}
+
+{% block title %}CPSE Source Material Catalogues | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>▤</span>
+            <span>Federated Repository &bull; Multi-CPSE Source Item Master</span>
+        </div>
+        <h1 class="page-title">CPSE Source Material Catalogues</h1>
+        <p class="page-subtitle">
+            Catalogues raw, unmodified legacy material codes from ONGC, NTPC, SAIL, and BHEL ERP repositories before and after attribute normalization.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div class="data-honesty-banner">
+            <span>📦</span>
+            <span>Total Catalogued: {{ total_materials }} Legacy CPSE Records</span>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH & FILTER STRIP -->
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-body" style="padding: 14px 16px;">
+        <form method="GET" action="{% url 'source_catalogue' %}" style="display: grid; grid-template-columns: 1fr 160px 160px 120px auto; gap: 12px; align-items: center;">
+            <input type="text" name="search" class="form-control" placeholder="Search description, code, or tokens..." value="{{ search }}">
+            
+            <select name="cpse" class="form-select">
+                <option value="">All CPSEs</option>
+                {% for c in cpse_options %}
+                    <option value="{{ c.cpse_id }}" {% if c.cpse_id|stringformat:"s" == selected_cpse %}selected{% endif %}>
+                        {{ c.cpse__code }} ({{ c.cpse__name }})
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                {% for cat in category_options %}
+                    <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="unit" class="form-select">
+                <option value="">All Units</option>
+                {% for u in unit_options %}
+                    <option value="{{ u }}" {% if u == selected_unit %}selected{% endif %}>{{ u }}</option>
+                {% endfor %}
+            </select>
+
+            <div style="display: flex; gap: 6px;">
+                <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                <a href="{% url 'source_catalogue' %}" class="btn btn-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SOURCE CATALOGUE DATA TABLE -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📋</span>
+            <span>Source CPSE Inventory Master ({{ visible_materials }} Displayed)</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Unfiltered Raw Legacy Catalogue</span>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">CPSE Entity</th>
+                    <th style="width: 140px;">Legacy Item Code</th>
+                    <th>Original CPSE Raw Description</th>
+                    <th>Normalized Engineering String</th>
+                    <th style="width: 80px;">Unit</th>
+                    <th style="width: 80px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mat in materials %}
+                <tr>
+                    <td>
+                        <span style="font-weight: 850; font-size: 11px; color: var(--navy-900); padding: 2px 6px; background: var(--blue-soft); border: 1px solid #bfdbfe; border-radius: 3px;">
+                            {{ mat.cpse.code }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'material_detail' mat.id %}" class="code-snippet" style="font-weight: 800; color: var(--navy-900);">
+                            {{ mat.material_code }}
+                        </a>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--navy-900); font-size: 12px;">
+                            {{ mat.description }}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 11.5px; color: var(--slate-700); font-family: monospace;">
+                            {{ mat.normalized_description|default:mat.description }}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 10.5px; color: var(--slate-500); font-weight: 600;">{{ mat.unit|default:"NOS" }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'material_detail' mat.id %}" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 10.5px;">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 24px; color: var(--slate-500);">
+                        No materials found matching criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

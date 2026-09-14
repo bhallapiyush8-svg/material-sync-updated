@@ -1,0 +1,991 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MaterialSync | National CPSE Material Harmonization Grid{% endblock %}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Serif:ital,wght@0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'materials/legacy.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/design-tokens.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/enterprise.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/reference-alignment.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/targeted-refinement.css' %}">
+
+    <style>
+        /* AUTHENTIC ENTERPRISE GOVERNMENT WORKSPACE DESIGN SYSTEM */
+        :root {
+            --gov-navy-primary: #0b2a55;
+            --gov-navy-dark: #071d3a;
+            --gov-navy-soft: #173b67;
+            --gov-saffron: #ea580c;
+            --gov-saffron-dark: #c2410c;
+            --gov-saffron-deep: #9a3412;
+            --gov-green: #16833b;
+            --gov-green-dark: #14532d;
+            --gov-bg-warm: #fdf2f5; /* BLENDED WHITEISH PINK WORKSPACE BACKGROUND */
+            --gov-card-bg: #ffffff;
+            --gov-border: #ebdbe2;
+            --gov-border-strong: #d8c3cb;
+            --gov-border-dark: #64748b;
+            --gov-text-dark: #172b4d;
+            --gov-text-body: #334155;
+            --gov-text-muted: #52677d;
+        }
+
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        body {
+            background-color: #fdf2f5 !important;
+            background: linear-gradient(180deg, #ffffff 0%, #fef5f8 35%, #fdf0f4 100%) fixed !important;
+            color: var(--gov-text-dark) !important;
+            font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 1. TOP SAFFRON ACCESSIBILITY BAR (Exact Home match) */
+        .gov-top-accessibility-bar {
+            background-color: #ff6f00 !important;
+            color: #ffffff !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            padding: 6px 32px !important;
+            border-bottom: 1px solid rgba(0,0,0,0.12) !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+        .gov-top-accessibility-bar a, .gov-top-accessibility-bar button {
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
+        /* 2. HEADER WITH EMBLEM & DIGITAL INDIA (Exact Home match) */
+        .gov-brand-header {
+            background: #ffffff !important;
+            padding: 12px 32px !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        /* 3. HORIZONTAL NAV BAR (Exact Home match) */
+        .public-nav-container {
+            background: #f1eee7 !important;
+            border-bottom: 1px solid #ded9ce !important;
+            padding: 0 32px !important;
+        }
+        .public-nav {
+            height: 42px !important;
+            min-height: 42px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0 !important;
+        }
+        .public-nav-links {
+            display: flex !important;
+            align-items: center !important;
+            gap: 22px !important;
+        }
+        .public-nav-links a {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #1e293b !important;
+            padding: 8px 2px !important;
+            border-bottom: 3px solid transparent !important;
+            text-decoration: none !important;
+            transition: all 0.15s ease !important;
+        }
+        .public-nav-links a:hover, .public-nav-links a.active {
+            color: #0b2a55 !important;
+            border-bottom-color: #ea580c !important;
+            font-weight: 700 !important;
+        }
+        .public-nav-links .nav-workspace {
+            color: #0b2a55 !important;
+            font-weight: 700 !important;
+            background: #fed7aa !important;
+            padding: 5px 12px !important;
+            border-radius: 4px !important;
+            border-bottom: none !important;
+            border: 1px solid #fdba74 !important;
+        }
+        .public-nav-links .nav-workspace:hover {
+            background: #fdba74 !important;
+        }
+
+        /* 4. NATURAL CARDS & SURFACES */
+        .card, .gov-card {
+            background: #ffffff !important;
+            border: 1px solid var(--gov-border) !important;
+            border-radius: 4px !important;
+            box-shadow: 0 1px 3px rgba(11, 42, 85, 0.04) !important;
+            overflow: hidden !important;
+        }
+        .card-header, .table-card-head {
+            background: #fafbfc !important;
+            border-bottom: 1px solid var(--gov-border) !important;
+            padding: 11px 16px !important;
+            font-weight: 700 !important;
+            color: var(--gov-navy-primary) !important;
+            font-size: 13px !important;
+        }
+        .card-body {
+            padding: 16px 18px !important;
+            color: var(--gov-text-body) !important;
+        }
+
+        /* 5. TYPOGRAPHY HIERARCHY */
+        .page-title {
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            color: var(--gov-navy-primary) !important;
+            font-family: 'Noto Serif', Georgia, serif !important;
+            line-height: 1.25 !important;
+            margin: 4px 0 6px !important;
+        }
+        .page-kicker {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.6px !important;
+            color: var(--gov-saffron-dark) !important;
+            margin-bottom: 4px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        .page-subtitle {
+            font-size: 13px !important;
+            color: var(--gov-text-muted) !important;
+            line-height: 1.5 !important;
+            margin-top: 4px !important;
+            font-weight: 400 !important;
+        }
+
+        /* 6. CLEAN ENTERPRISE TABLES */
+        .data-table, .gov-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-size: 12px !important;
+            background: #ffffff !important;
+        }
+        .data-table th, .gov-table th {
+            background: var(--gov-navy-primary) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            padding: 10px 14px !important;
+            border-bottom: 2px solid var(--gov-navy-dark) !important;
+            text-transform: uppercase !important;
+            font-size: 11px !important;
+            letter-spacing: 0.5px !important;
+        }
+        .data-table td, .gov-table td {
+            padding: 10px 14px !important;
+            border-bottom: 1px solid var(--gov-border) !important;
+            color: var(--gov-text-dark) !important;
+            font-weight: 400 !important;
+            vertical-align: middle !important;
+        }
+        .data-table tr:nth-child(even) td, .gov-table tr:nth-child(even) td {
+            background: #fafbfc !important;
+        }
+        .data-table tr:hover td, .gov-table tr:hover td {
+            background: #f1f5f9 !important;
+        }
+
+        /* 7. NATURAL SATURATED BUTTONS */
+        .btn-primary {
+            background: var(--gov-navy-primary) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            border: 1px solid var(--gov-navy-dark) !important;
+            border-radius: 4px !important;
+            padding: 7px 16px !important;
+            font-size: 12px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            cursor: pointer !important;
+            transition: background 0.12s ease !important;
+        }
+        .btn-primary:hover {
+            background: var(--gov-navy-soft) !important;
+        }
+        .btn-saffron {
+            background: var(--gov-saffron-deep) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            border: 1px solid #9a3412 !important;
+            border-radius: 4px !important;
+            padding: 7px 16px !important;
+            font-size: 12px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            cursor: pointer !important;
+            transition: background 0.12s ease !important;
+        }
+        .btn-saffron:hover {
+            background: #9a3412 !important;
+        }
+        .btn-secondary {
+            background: #ffffff !important;
+            color: var(--gov-text-dark) !important;
+            border: 1px solid var(--gov-border) !important;
+            font-weight: 600 !important;
+            border-radius: 4px !important;
+            padding: 7px 14px !important;
+            font-size: 12px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            cursor: pointer !important;
+            transition: all 0.12s ease !important;
+        }
+        .btn-secondary:hover {
+            background: #fff5f8 !important;
+            border-color: var(--gov-border-strong) !important;
+        }
+
+        /* 8. NATURAL SATURATED STATUS PILLS */
+        .status-pill {
+            display: inline-flex !important;
+            align-items: center !important;
+            padding: 2.5px 8px !important;
+            border-radius: 3px !important;
+            font-size: 10.5px !important;
+            font-weight: 600 !important;
+            gap: 4px !important;
+            letter-spacing: 0.2px !important;
+            line-height: 1.3 !important;
+        }
+        .status-identical, .status-verified, .status-green, .status-approved {
+            background: #eaf5ec !important;
+            color: #166534 !important;
+            border: 1px solid #bbf7d0 !important;
+        }
+        .status-equivalent, .status-blue {
+            background: #eff6ff !important;
+            color: #1e40af !important;
+            border: 1px solid #bfdbfe !important;
+        }
+        .status-different, .status-blocked, .status-red {
+            background: #fef2f2 !important;
+            color: #991b1b !important;
+            border: 1px solid #fecaca !important;
+        }
+        .status-warning, .status-amber {
+            background: #fffbeb !important;
+            color: #92400e !important;
+            border: 1px solid #fde68a !important;
+        }
+
+        /* 9. SIDEBAR STYLING FOR WORKSPACE */
+        .gov-sidebar {
+            background: #fdf4f7 !important;
+            border-right: 1px solid var(--gov-border) !important;
+            width: 250px !important;
+            padding-top: 8px !important;
+            flex-shrink: 0 !important;
+        }
+        .sidebar-section-header {
+            font-size: 10.5px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.6px !important;
+            color: var(--gov-border-dark) !important;
+            padding: 10px 16px 4px !important;
+        }
+        .sidebar-nav-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 8px 12px !important;
+            margin: 2px 8px !important;
+            border-radius: 4px !important;
+            color: #334155 !important;
+            font-weight: 500 !important;
+            font-size: 12.5px !important;
+            text-decoration: none !important;
+            transition: all 0.12s ease !important;
+            border: 1px solid transparent !important;
+        }
+        .sidebar-nav-item:hover {
+            background: #ffffff !important;
+            border-color: var(--gov-border) !important;
+            color: var(--gov-navy-primary) !important;
+        }
+        .sidebar-nav-item.active {
+            background: var(--gov-navy-primary) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            border-color: var(--gov-navy-dark) !important;
+            box-shadow: 0 1px 2px rgba(11, 42, 85, 0.08) !important;
+        }
+        .sidebar-nav-icon {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 18px !important;
+            min-width: 18px !important;
+            height: 18px !important;
+            flex-shrink: 0 !important;
+            color: var(--gov-border-dark) !important;
+            transition: color 0.12s ease !important;
+        }
+        .sidebar-nav-item:hover .sidebar-nav-icon {
+            color: var(--gov-navy-primary) !important;
+        }
+        .sidebar-nav-item.active .sidebar-nav-icon {
+            color: #ffffff !important;
+        }
+
+        /* 10. HARMONIOUS SUB TOPBAR WITH SIH PITCH FLOW */
+        .gov-sub-topbar {
+            background: #ffffff !important;
+            border-bottom: 1px solid var(--gov-border) !important;
+            padding: 6px 20px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            font-size: 11.5px !important;
+        }
+        .flow-pill-tag {
+            font-weight: 700 !important;
+            color: var(--gov-navy-primary) !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+        .flow-step-btn {
+            background: #ffffff !important;
+            border: 1px solid var(--gov-border) !important;
+            border-radius: 3px !important;
+            padding: 3px 8px !important;
+            font-size: 11px !important;
+            font-weight: 500 !important;
+            color: #334155 !important;
+            text-decoration: none !important;
+            transition: all 0.12s ease !important;
+        }
+        .flow-step-btn:hover {
+            background: #fff5f8 !important;
+            border-color: var(--gov-border-strong) !important;
+            color: var(--gov-navy-primary) !important;
+        }
+        .flow-step-btn.active {
+            background: var(--gov-navy-primary) !important;
+            color: #ffffff !important;
+            border-color: var(--gov-navy-dark) !important;
+            font-weight: 600 !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- 1. TOP SAFFRON ACCESSIBILITY BAR (Exact Home match) -->
+    <div class="gov-top-accessibility-bar">
+        <div>
+            <span lang="hi">भारत सरकार</span>
+            <span style="opacity:0.7; margin:0 8px;">|</span>
+            Government of India
+            <span style="opacity:0.7; margin:0 8px;">|</span>
+            <span lang="hi">स्मार्ट इंडिया हैकथॉन (SIH 2026)</span>
+            <span style="opacity:0.9; margin-left:8px; font-weight:700;">• Problem Statement ID: SIH26099</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="#main-content" id="skip-to-content" style="color:#ffffff; text-decoration: underline; cursor: pointer; font-size: 11px;">Skip to Main Content</a>
+            <span style="opacity:0.6;">|</span>
+            
+            <!-- FONT RESIZER BUTTONS (A- A A+) -->
+            <div style="display: inline-flex; align-items: center; gap: 2px; background: rgba(0,0,0,0.18); padding: 1.5px 3px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.3);">
+                <button type="button" class="gov-scale-btn" data-scale="-1" title="Decrease font size" style="background: transparent; border: none; color: #ffffff; padding: 1.5px 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; border-radius: 2px;">A-</button>
+                <button type="button" class="gov-scale-btn active-scale" data-scale="0" title="Reset font size" style="background: rgba(255,255,255,0.25); border: none; color: #ffffff; padding: 1.5px 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; border-radius: 2px;">A</button>
+                <button type="button" class="gov-scale-btn" data-scale="1" title="Increase font size" style="background: transparent; border: none; color: #ffffff; padding: 1.5px 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; border-radius: 2px;">A+</button>
+            </div>
+            <span style="opacity:0.6;">|</span>
+            
+            <!-- HINDI / ENGLISH LANGUAGE TOGGLE & PORTAL ACCESS -->
+            <div style="position: relative; display: inline-block;">
+                <button type="button" id="gov-lang-btn" title="Toggle Hindi / English translation" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.35); color: #ffffff; padding: 2.5px 8px; font-size: 11px; font-weight: 700; border-radius: 3px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+                    <span id="lang-btn-label"><span lang="hi">हिंदी</span> / English</span>
+                    <span style="font-size: 8px; opacity: 0.8;">▼</span>
+                </button>
+                <div id="gov-lang-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #ffffff; color: #071d3a; border-radius: 4px; box-shadow: 0 4px 14px rgba(0,0,0,0.25); border: 1px solid #cbd5e1; z-index: 9999; min-width: 190px; padding: 6px 0; text-align: left;">
+                    <button type="button" id="lang-switch-toggle" style="width: 100%; text-align: left; background: none; border: none; padding: 7px 14px; font-size: 11.5px; font-weight: 600; color: #0b2a55; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🇮🇳 हिन्दी (Bilingual Mode)</span>
+                        <span id="hi-status-indicator" style="font-size: 9px; padding: 1px 4px; background: #e2e8f0; border-radius: 2px; color: #475569;">OFF</span>
+                    </button>
+                    <button type="button" id="lang-switch-en" style="width: 100%; text-align: left; background: none; border: none; padding: 7px 14px; font-size: 11.5px; font-weight: 600; color: #0b2a55; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                        <span>🌐 English (Default)</span>
+                        <span id="en-status-indicator" style="font-size: 9px; padding: 1px 4px; background: #dcfce7; border-radius: 2px; color: #166534;">ON</span>
+                    </button>
+                    <div style="height: 1px; background: #e2e8f0; margin: 4px 0;"></div>
+                    <a href="{% url 'multilingual' %}" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; color: #c2410c; text-decoration: none;">
+                        <span>📖</span> Multilingual Dictionary &rarr;
+                    </a>
+                </div>
+            </div>
+            <span style="opacity:0.6;">|</span>
+            
+            <!-- OFFICER SIGN-IN / STATUS -->
+            {% if request.user.is_authenticated %}
+                <span style="background: #0a2540; color: #ffffff; padding: 2.5px 8px; border-radius: 3px; font-weight: 750; font-size: 11px; border: 1px solid rgba(255,255,255,0.25); display: inline-flex; align-items: center; gap: 4px;">
+                    <span style="color: #4ade80; font-size: 9px;">●</span> Er. {{ request.session.engineer_employee_id|default:request.user.username }} ({{ request.session.engineer_org|default:'ONGC' }})
+                </span>
+                <a href="{% url 'engineer_logout' %}" style="color:#ffffff; text-decoration:underline; margin-left:4px; font-size: 11px; font-weight: 600;">Sign Out</a>
+            {% else %}
+                <div style="position: relative; display: inline-block;">
+                    <button type="button" id="officer-login-trigger" style="background: rgba(10,37,64,0.6); color: #ffffff; font-weight: 800; padding: 2.5px 9px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.35); font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <span>🔒</span> Officer Sign-In
+                        <span style="font-size: 8px; opacity: 0.8;">▼</span>
+                    </button>
+                    <div id="officer-login-popover" style="display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #ffffff; color: #071d3a; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border: 1px solid #cbd5e1; z-index: 9999; width: 280px; padding: 14px 16px; text-align: left;">
+                        <div style="font-size: 11px; font-weight: 800; color: #0a2540; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+                            <span>Technical Scrutiny Auth</span>
+                            <span style="background: #eaf5ec; color: #166534; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; border: 1px solid #bbf7d0;">Level 2</span>
+                        </div>
+                        <p style="font-size: 11px; color: #64748b; margin: 0 0 10px; line-height: 1.4;">
+                            Authorized Materials Management Officer credentials for DPE scrutiny and sign-offs.
+                        </p>
+                        <form method="POST" action="{% url 'engineer_login' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <input type="hidden" name="employee_id" value="ONGC-MM-4821">
+                            <input type="hidden" name="password" value="demo@sih2026">
+                            <input type="hidden" name="organisation" value="ONGC">
+                            <input type="hidden" name="role" value="Chief Materials Manager">
+                            <button type="submit" style="width: 100%; background: #ea580c; color: #ffffff; border: none; border-radius: 4px; padding: 8px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(234,88,12,0.3);">
+                                <span>⚡</span> 1-Click Officer Sign-In (ONGC)
+                            </button>
+                        </form>
+                        <div style="text-align: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+                            <a href="{% url 'engineer_login' %}?next={{ request.get_full_path|urlencode }}" style="font-size: 11px; color: #0b2a55; text-decoration: underline; font-weight: 600;">
+                                Enter Custom Credentials &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 2. NATIONAL EMBLEM & PORTAL BRANDING HEADER (Exact Home match) -->
+    <header class="gov-brand-header">
+        <div style="display:flex; align-items:center; gap:16px;">
+            <img src="{% static 'images/emblem_cropped.png' %}" alt="Government of India Emblem" style="height:54px; width:auto;" />
+            <div>
+                <div style="font-size:13px; font-weight:700; color:#0a2540; line-height:1.25;">पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय</div>
+                <div style="font-size:15px; font-weight:800; color:#071d3a; line-height:1.25;">Ministry of Petroleum and Natural Gas</div>
+                <div style="font-size:11.5px; font-weight:600; color:#334155; margin-top:2px;">National CPSE Material Standardization &amp; Harmonization Grid (SIH-2026)</div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:22px;">
+            <div style="text-align:right;">
+                <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                    <a href="{% url 'home' %}" style="text-decoration:none; font-size:23px; font-weight:800; color:#0a2540;">
+                        <span>Material</span><span style="color:#ea580c;">Sync</span>
+                    </a>
+                    <span style="background:#ea580c; color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:3px;">v2.4 PRO</span>
+                </div>
+                <div style="font-size:10.5px; color:#334155; font-weight:600;">राष्ट्रीय सामग्री मानकीकरण एवं सामंजस्य ग्रिड</div>
+                <div style="font-size:10px; color:#475569; font-weight:700;">A Gov-Tech Prototype | SIH26099</div>
+            </div>
+            <img src="{% static 'images/digital_india_cropped.png' %}" alt="Digital India" style="height:42px; width:auto; border-left:1px solid #cbd5e1; padding-left:18px;" />
+        </div>
+    </header>
+
+    <!-- 3. HORIZONTAL MAIN NAVIGATION (Exact Home match) -->
+    <div class="public-nav-container">
+        <nav class="public-nav" aria-label="Main navigation">
+            <div class="public-nav-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+                <a href="{% url 'comparator' %}" class="{% if request.resolver_match.url_name == 'comparator' %}active{% endif %}">Material Harmonization</a>
+                <a href="{% url 'material_transfer' %}" class="{% if request.resolver_match.url_name == 'material_transfer' %}active{% endif %}">Inter-CPSE Transfer</a>
+                <a href="{% url 'savings' %}" class="{% if request.resolver_match.url_name == 'savings' %}active{% endif %}">Inventory Intelligence</a>
+                <a href="{% url 'procurement' %}" class="{% if request.resolver_match.url_name == 'procurement' %}active{% endif %}">Procurement</a>
+                <a href="{% url 'review_workbench' %}" class="{% if request.resolver_match.url_name in 'review_workbench,review_workbench_alias' %}active{% endif %}">Officer Scrutiny</a>
+                <a class="nav-workspace" href="{% url 'dashboard' %}">Workspace &rarr;</a>
+            </div>
+            <form action="{% url 'search' %}" method="get" style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <input type="search" name="q" placeholder="Search catalog, item code, CPSE..." style="padding:5px 10px; font-size:11.5px; border:1px solid #cbd5e1; border-radius:4px; width:200px; max-width:220px;" />
+                <button type="submit" style="background:#0a2540; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">Search</button>
+            </form>
+        </nav>
+    </div>
+
+    <!-- 4. WORKSPACE / PUBLIC CONTAINER -->
+    <div class="app-layout-body" style="background: linear-gradient(180deg, #ffffff 0%, #fef5f8 35%, #fdf0f4 100%); min-height: calc(100vh - 240px); display: flex;">
+        {% if request.resolver_match.url_name != 'about' %}
+            <!-- SIDEBAR -->
+            <aside class="gov-sidebar">
+                <div class="sidebar-section-header">Operational Grid</div>
+
+                <div class="sidebar-nav-list" style="padding: 4px 0; display: flex; flex-direction: column; gap: 2px;">
+                    <a href="{% url 'dashboard' %}" class="sidebar-nav-item {% if request.resolver_match.url_name in 'dashboard,dashboard_alias' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="14" y="14" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            </svg>
+                        </span>
+                        <span>Control Centre</span>
+                    </a>
+
+                    <a href="{% url 'document_ingest' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'document_ingest' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <line x1="10" y1="9" x2="8" y2="9"/>
+                            </svg>
+                        </span>
+                        <span>Material Registry</span>
+                    </a>
+
+                    <a href="{% url 'comparator' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'comparator' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="18" y1="8" x2="6" y2="8"/>
+                                <polyline points="10 4 6 8 10 12"/>
+                                <line x1="6" y1="16" x2="18" y2="16"/>
+                                <polyline points="14 12 18 16 14 20"/>
+                            </svg>
+                        </span>
+                        <span>Specification Comparator</span>
+                    </a>
+
+                    <a href="{% url 'cad_matcher' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'cad_matcher' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </span>
+                        <span>3D CAD Matcher</span>
+                    </a>
+
+                    <a href="{% url 'material_transfer' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'material_transfer' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="1" y="3" width="15" height="13" rx="1"/>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                <circle cx="5.5" cy="18.5" r="2.5"/>
+                                <circle cx="18.5" cy="18.5" r="2.5"/>
+                            </svg>
+                        </span>
+                        <span>Inter-CPSE Transfer</span>
+                    </a>
+
+                    <a href="{% url 'compliance' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'compliance' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="m9 12 2 2 4-4"/>
+                            </svg>
+                        </span>
+                        <span>Standards Twin</span>
+                    </a>
+
+                    <a href="{% url 'savings' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'savings' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                            </svg>
+                        </span>
+                        <span>Capex Avoidance &amp; CO₂</span>
+                    </a>
+
+                    <a href="{% url 'procurement' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'procurement' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                        </span>
+                        <span>Price Variance Analysis</span>
+                    </a>
+
+                    <div class="sidebar-section-header" style="margin-top: 10px;">Master &amp; Governance</div>
+
+                    <a href="{% url 'national_master' %}" class="sidebar-nav-item {% if request.resolver_match.url_name in 'national_master,national_material_detail' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="2" y1="20" x2="22" y2="20"/>
+                                <line x1="4" y1="10" x2="4" y2="17"/>
+                                <line x1="10" y1="10" x2="10" y2="17"/>
+                                <line x1="14" y1="10" x2="14" y2="17"/>
+                                <line x1="20" y1="10" x2="20" y2="17"/>
+                                <polygon points="12 2 2 7 22 7"/>
+                            </svg>
+                        </span>
+                        <span>National Master</span>
+                    </a>
+
+                    <a href="{% url 'review_workbench' %}" class="sidebar-nav-item {% if request.resolver_match.url_name in 'review_workbench,review_workbench_alias' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <polyline points="17 11 19 13 23 9"/>
+                            </svg>
+                        </span>
+                        <span>Officer Scrutiny</span>
+                    </a>
+
+                    <a href="{% url 'source_catalogue' %}" class="sidebar-nav-item {% if request.resolver_match.url_name in 'source_catalogue,material_detail' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                            </svg>
+                        </span>
+                        <span>Source Catalogues</span>
+                    </a>
+
+                    <a href="{% url 'multilingual' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'multilingual' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </span>
+                        <span>Multilingual Dictionary</span>
+                    </a>
+
+                    <a href="{% url 'advanced_center' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'advanced_center' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+                            </svg>
+                        </span>
+                        <span>Advanced Innovation Suite</span>
+                    </a>
+
+                    <a href="{% url 'data_lineage' %}" class="sidebar-nav-item {% if request.resolver_match.url_name == 'data_lineage' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="6" y1="3" x2="6" y2="15"/>
+                                <circle cx="18" cy="6" r="3"/>
+                                <circle cx="6" cy="18" r="3"/>
+                                <path d="M18 9a9 9 0 0 1-9 9"/>
+                            </svg>
+                        </span>
+                        <span>Cryptographic Lineage</span>
+                    </a>
+
+                    <a href="{% url 'audit_trail' %}" class="sidebar-nav-item {% if request.resolver_match.url_name in 'audit_trail,audit_trail_alias' %}active{% endif %}">
+                        <span class="sidebar-nav-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="12" y1="3" x2="12" y2="21"/>
+                                <path d="M5 21h14"/>
+                                <path d="M5 6l7-3 7 3"/>
+                                <path d="M2 13l3-7 3 7a3 3 0 0 1-6 0z"/>
+                                <path d="M16 13l3-7 3 7a3 3 0 0 1-6 0z"/>
+                            </svg>
+                        </span>
+                        <span>Council Audit Trail</span>
+                    </a>
+                </div>
+
+                <!-- SIDEBAR FOOTER -->
+                <div style="margin: 16px 10px; padding: 10px 12px; background: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; font-size: 11px;">
+                    <div style="font-weight: 700; color: var(--gov-navy-primary); display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Grid Status</span>
+                        <span style="background: #eaf5ec; color: #166534; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 3px; border: 1px solid #bbf7d0;">ONLINE</span>
+                    </div>
+                    <div style="font-size: 10.5px; color: var(--gov-text-muted); font-weight: 500; line-height: 1.35;">
+                        ONGC &bull; IOCL &bull; NTPC &bull; SAIL &bull; BHEL &bull; BPCL
+                    </div>
+                </div>
+            </aside>
+        {% endif %}
+
+        <!-- MAIN VIEWPORT -->
+        <div class="app-main-viewport" style="flex:1; display:flex; flex-direction:column; min-width: 0;">
+            {% if request.resolver_match.url_name != 'about' %}
+                <!-- SUB-TOPBAR WITH PITCH FLOW BUTTONS -->
+                <div class="gov-sub-topbar">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span class="flow-pill-tag">SIH Pitch Flow:</span>
+                        <a href="{% url 'dashboard' %}" class="flow-step-btn {% if request.resolver_match.url_name in 'dashboard,dashboard_alias' %}active{% endif %}">1. Control</a>
+                        <a href="{% url 'comparator' %}?demo=identical" class="flow-step-btn {% if request.resolver_match.url_name == 'comparator' and request.GET.demo == 'identical' %}active{% endif %}">2. Identical</a>
+                        <a href="{% url 'comparator' %}?demo=equivalent" class="flow-step-btn {% if request.resolver_match.url_name == 'comparator' and request.GET.demo == 'equivalent' %}active{% endif %}">3. Equivalent</a>
+                        <a href="{% url 'comparator' %}?demo=different" class="flow-step-btn {% if request.resolver_match.url_name == 'comparator' and request.GET.demo == 'different' %}active{% endif %}">4. Different</a>
+                        <a href="{% url 'cad_matcher' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'cad_matcher' %}active{% endif %}">5. CAD 3D</a>
+                        <a href="{% url 'material_transfer' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'material_transfer' %}active{% endif %}">6. Transfer</a>
+                        <a href="{% url 'review_workbench' %}" class="flow-step-btn {% if request.resolver_match.url_name in 'review_workbench,review_workbench_alias' %}active{% endif %}">7. Scrutiny</a>
+                        <a href="{% url 'compliance' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'compliance' %}active{% endif %}">8. Compliance</a>
+                        <a href="{% url 'savings' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'savings' %}active{% endif %}">9. Savings</a>
+                        <a href="{% url 'procurement' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'procurement' %}active{% endif %}">10. Procurement</a>
+                        <a href="{% url 'multilingual' %}" class="flow-step-btn {% if request.resolver_match.url_name == 'multilingual' %}active{% endif %}">11. Multilingual</a>
+                        <a href="{% url 'audit_trail' %}" class="flow-step-btn {% if request.resolver_match.url_name in 'audit_trail,audit_trail_alias' %}active{% endif %}">12. Governance</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- MAIN INNER CONTENT -->
+            <main class="app-page-content" id="main-content" style="padding: {% if request.resolver_match.url_name == 'about' %}28px 32px{% else %}20px 24px{% endif %}; flex: 1; {% if request.resolver_match.url_name == 'about' %}max-width: 1360px; margin: 0 auto; width: 100%; box-sizing: border-box;{% endif %}">
+                {% if messages %}
+                    <div style="margin-bottom: 18px;">
+                        {% for message in messages %}
+                            <div style="padding: 10px 16px; border-radius: 4px; font-size: 12.5px; font-weight: 600; margin-bottom: 8px; background: {% if message.tags == 'error' %}#fee2e2; color: #991b1b; border: 1px solid #fca5a5;{% else %}#dcfce7; color: #14532d; border: 1px solid #86efac;{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- 5. FOOTER (Exact Home match) -->
+    <footer class="gov-footer homepage-footer" style="background:#071d3a; color:#cbd5e1; padding:32px 32px 20px; border-top:3px solid #ff6f00;">
+        <div style="max-width: 1360px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 32px; margin-bottom: 24px;">
+            <div>
+                <div style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">
+                    <span>Material</span><span style="color: #ea580c;">Sync</span>
+                </div>
+                <p style="font-size: 12px; color: #94a3b8; line-height: 1.6; max-width: 380px;">
+                    National CPSE Material Standardization &amp; Inter-Enterprise Surplus Reallocation Grid. Developed for Smart India Hackathon 2026 under Ministry of Petroleum and Natural Gas guidelines.
+                </p>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 10px;">Verification Engine</div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                    <a href="{% url 'comparator' %}" style="color: #cbd5e1; text-decoration: none;">Material Comparator</a>
+                    <a href="{% url 'material_transfer' %}" style="color: #cbd5e1; text-decoration: none;">Inter-CPSE Transfer</a>
+                    <a href="{% url 'compliance' %}" style="color: #cbd5e1; text-decoration: none;">Standards Twin</a>
+                    <a href="{% url 'savings' %}" style="color: #cbd5e1; text-decoration: none;">Avoided Capex Model</a>
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 10px;">Statutory Governance</div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                    <a href="{% url 'about' %}" style="color: #cbd5e1; text-decoration: none;">SIH26099 Problem Brief</a>
+                    <a href="{% url 'review_workbench' %}" style="color: #cbd5e1; text-decoration: none;">Gazetted Officer Sign-off</a>
+                    <a href="{% url 'audit_trail' %}" style="color: #cbd5e1; text-decoration: none;">CAG Audit Ledger</a>
+                    <a href="{% url 'data_lineage' %}" style="color: #cbd5e1; text-decoration: none;">SHA-256 Lineage</a>
+                </div>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 10px;">SIH26099 Secretariat</div>
+                <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                    National CPSE Material Master Standardization Grid<br>
+                    <strong>Smart India Hackathon 2026</strong><br>
+                    Evaluation Category: Gov-Tech &bull; Industrial Master Data
+                </div>
+            </div>
+        </div>
+
+        <div style="max-width: 1360px; margin: 0 auto; padding-top: 16px; border-top: 1px solid #1e3a5f; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b;">
+            <div>
+                MaterialSync &bull; Smart India Hackathon 2026 &bull; Problem Statement ID: <strong>SIH26099</strong>
+            </div>
+            <div>
+                Proof-of-concept software prototype &bull; Aligned with GIGW 3.0 &amp; DPE Master Guidelines
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE ACCESSIBILITY & PORTAL CONTROLS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. SKIP TO MAIN CONTENT
+            const skipBtn = document.getElementById('skip-to-content');
+            if (skipBtn) {
+                skipBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const mainContent = document.getElementById('main-content');
+                    if (mainContent) {
+                        mainContent.setAttribute('tabindex', '-1');
+                        mainContent.focus();
+                        mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        mainContent.style.outline = '2px solid #ea580c';
+                        mainContent.style.outlineOffset = '4px';
+                        setTimeout(() => { mainContent.style.outline = 'none'; }, 1500);
+                    }
+                });
+            }
+
+            // 2. FONT RESIZER (A- A A+)
+            let currentScale = 0;
+            const scaleButtons = document.querySelectorAll('.gov-scale-btn');
+            function applyScale(scale) {
+                currentScale = Math.max(-2, Math.min(3, scale));
+                scaleButtons.forEach(btn => {
+                    const btnScale = Number(btn.dataset.scale);
+                    if (btnScale === currentScale || (btnScale === 0 && currentScale === 0)) {
+                        btn.style.background = 'rgba(255,255,255,0.3)';
+                    } else {
+                        btn.style.background = 'transparent';
+                    }
+                });
+                const zoomVal = 100 + (currentScale * 7);
+                document.body.style.zoom = zoomVal + '%';
+                document.documentElement.style.fontSize = (16 + currentScale * 1.5) + 'px';
+                try { localStorage.setItem('materialsync_scale', currentScale); } catch(e){}
+            }
+
+            scaleButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const s = Number(this.dataset.scale);
+                    if (s === 0) {
+                        applyScale(0);
+                    } else {
+                        applyScale(currentScale + s);
+                    }
+                });
+            });
+
+            try {
+                const saved = localStorage.getItem('materialsync_scale');
+                if (saved !== null && Number(saved) !== 0) {
+                    applyScale(Number(saved));
+                }
+            } catch(e){}
+
+            // 3. HINDI / ENGLISH IN-PAGE TRANSLATION & TOGGLE
+            const langBtn = document.getElementById('gov-lang-btn');
+            const langMenu = document.getElementById('gov-lang-menu');
+            const langSwitchToggle = document.getElementById('lang-switch-toggle');
+            const langSwitchEn = document.getElementById('lang-switch-en');
+            const hiIndicator = document.getElementById('hi-status-indicator');
+            const enIndicator = document.getElementById('en-status-indicator');
+            const langBtnLabel = document.getElementById('lang-btn-label');
+
+            let isHindi = false;
+            const translations = {
+                "Home": "मुख्य पृष्ठ",
+                "About": "के बारे में",
+                "Material Harmonization": "सामग्री मानकीकरण",
+                "Inter-CPSE Transfer": "अंतर-सीपीएसई स्थानांतरण",
+                "Inventory Intelligence": "इन्वेंट्री इंटेलिजेंस",
+                "Procurement": "खरीद एवं अधिप्राप्ति",
+                "Officer Scrutiny": "अधिकारी संवीक्षा",
+                "Workspace →": "कार्यक्षेत्र →",
+                "Operational Grid": "परिचालन ग्रिड",
+                "Control Centre": "नियंत्रण केंद्र",
+                "Material Registry": "सामग्री रजिस्ट्री",
+                "Specification Comparator": "विनिर्देश तुलनाकर्ता",
+                "Master Catalog Matcher": "मास्टर कैटलॉग मिलान",
+                "3D CAD Similarity": "3D सीएडी समानता",
+                "National Master": "राष्ट्रीय मास्टर डेटा",
+                "Source Catalogues": "स्रोत कैटलॉग",
+                "Multilingual Dictionary": "बहुभाषी शब्दकोश",
+                "Statutory Audit Trail": "सांविधिक ऑडिट ट्रेल",
+                "DPE Compliance Twin": "डीपीई अनुपालन ट्विन",
+                "Avoided Capex Model": "बचत पूंजीगत व्यय मॉडल"
+            };
+
+            function toggleHindiLanguage(enable) {
+                isHindi = enable;
+                if (hiIndicator) {
+                    hiIndicator.innerText = isHindi ? 'ON' : 'OFF';
+                    hiIndicator.style.background = isHindi ? '#dcfce7' : '#e2e8f0';
+                    hiIndicator.style.color = isHindi ? '#166534' : '#475569';
+                }
+                if (enIndicator) {
+                    enIndicator.innerText = isHindi ? 'OFF' : 'ON';
+                    enIndicator.style.background = isHindi ? '#e2e8f0' : '#dcfce7';
+                    enIndicator.style.color = isHindi ? '#475569' : '#166534';
+                }
+                if (langBtnLabel) {
+                    langBtnLabel.innerHTML = isHindi ? '<span lang="hi">हिन्दी (सक्रिय)</span>' : '<span lang="hi">हिंदी</span> / English';
+                }
+
+                // Translate nav and sidebar elements
+                document.querySelectorAll('.public-nav-links a, .sidebar-nav-item span:not(.sidebar-nav-icon), .sidebar-section-header').forEach(el => {
+                    const txt = el.innerText.trim();
+                    if (isHindi && translations[txt]) {
+                        el.setAttribute('data-en-original', txt);
+                        el.innerText = translations[txt];
+                    } else if (!isHindi && el.getAttribute('data-en-original')) {
+                        el.innerText = el.getAttribute('data-en-original');
+                    }
+                });
+
+                // Subtle toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#071d3a;color:#fff;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.25);z-index:10000;border-left:3px solid #ea580c;';
+                toast.innerText = isHindi ? '🇮🇳 भाषा बदली गई: हिन्दी (द्विभाषी मोड सक्रिय)' : '🌐 Language switched: English (Default)';
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.remove(); }, 2200);
+            }
+
+            if (langBtn) {
+                langBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (langMenu) {
+                        langMenu.style.display = langMenu.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
+            }
+
+            if (langSwitchToggle) {
+                langSwitchToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleHindiLanguage(!isHindi);
+                    if (langMenu) langMenu.style.display = 'none';
+                });
+            }
+
+            if (langSwitchEn) {
+                langSwitchEn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleHindiLanguage(false);
+                    if (langMenu) langMenu.style.display = 'none';
+                });
+            }
+
+            // 4. OFFICER SIGN-IN POPOVER
+            const loginTrigger = document.getElementById('officer-login-trigger');
+            const loginPopover = document.getElementById('officer-login-popover');
+            if (loginTrigger && loginPopover) {
+                loginTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    loginPopover.style.display = loginPopover.style.display === 'block' ? 'none' : 'block';
+                });
+            }
+
+            // Global click to close popovers
+            document.addEventListener('click', function(e) {
+                if (langMenu && !langMenu.contains(e.target) && e.target !== langBtn) {
+                    langMenu.style.display = 'none';
+                }
+                if (loginPopover && !loginPopover.contains(e.target) && e.target !== loginTrigger) {
+                    loginPopover.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

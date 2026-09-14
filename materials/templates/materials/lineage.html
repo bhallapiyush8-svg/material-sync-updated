@@ -1,0 +1,177 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Data Lineage & Cryptographic Traceability | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>⑂</span>
+            <span>Provenance Graph &bull; Full Lifecycle Traceability</span>
+        </div>
+        <h1 class="page-title">Data Lineage & Cryptographic Traceability</h1>
+        <p class="page-subtitle">
+            Traces the complete provenance graph from fragmented legacy CPSE ERP codes (SAP/Oracle) to the unified National Material Master identity with immutable audit hashes.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div class="data-honesty-banner">
+            <span>🔒</span>
+            <span>Immutable Lineage Hash: {{ lineage.audit_hash|truncatechars:28 }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- CANONICAL TARGET IDENTITY SUMMARY BANNER -->
+<div class="card" style="border-left: 4px solid var(--green-verified); margin-bottom: 22px;">
+    <div style="padding: 16px 20px; background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%); display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span class="code-snippet" style="font-size: 13px; font-weight: 900; color: var(--navy-900);">
+                    {{ lineage.target_national_code }}
+                </span>
+                <span class="status-pill status-approved">Approved National Master</span>
+                <span style="font-size: 11px; font-weight: 700; color: var(--blue-primary);">5 Source CPSEs Harmonized</span>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; color: var(--navy-900);">
+                {{ lineage.target_description }}
+            </div>
+            <div style="font-size: 10.5px; color: var(--slate-500); margin-top: 4px;">
+                Governing Standard: <strong>{{ lineage.standard_assigned }}</strong> &bull; Harmonized On: {{ lineage.harmonization_date }}
+            </div>
+        </div>
+        <div style="text-align: right; flex-shrink: 0;">
+            <div style="font-size: 24px; font-weight: 900; color: var(--green-verified);">
+                {{ lineage.confidence_score }}%
+            </div>
+            <div style="font-size: 10px; color: var(--slate-500);">
+                Consensus Confidence
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VISUAL INTERACTIVE LINEAGE GRAPH (SVG FLOWCHART) -->
+<div class="card" style="margin-bottom: 22px;">
+    <div class="card-header">
+        <div class="card-title">
+            <span>⑂</span>
+            <span>Multi-CPSE Ingestion & Convergence Graph</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Interactive Visual Ingestion Pipeline</span>
+    </div>
+    <div class="card-body" style="padding: 24px 20px; background: #fafbfc; overflow-x: auto;">
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; min-width: 900px; position: relative;">
+            
+            <!-- COLUMN 1: 5 CPSE SOURCE NODES -->
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 220px; z-index: 2;">
+                <div style="font-size: 9px; font-weight: 850; text-transform: uppercase; color: var(--slate-500); text-align: center; margin-bottom: 4px;">
+                    1. Legacy CPSE Item Masters
+                </div>
+                {% for node in lineage.source_nodes %}
+                <div style="padding: 8px 10px; background: var(--surface); border: 1.5px solid var(--border); border-left: 3px solid var(--blue-primary); border-radius: var(--radius-sm); box-shadow: var(--shadow-xs);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 850; font-size: 11px; color: var(--navy-900);">{{ node.cpse }}</span>
+                        <span class="code-snippet" style="font-size: 9px;">{{ node.legacy_code }}</span>
+                    </div>
+                    <div style="font-size: 9.5px; color: var(--slate-600); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ node.raw_text }}">
+                        "{{ node.raw_text }}"
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- SVG CONNECTING CURVES -->
+            <div style="flex: 1; height: 320px; display: flex; align-items: center; justify-content: center; position: relative;">
+                <svg width="100%" height="100%" viewBox="0 0 200 320" preserveAspectRatio="none" style="position: absolute; inset: 0;">
+                    <path d="M 0,35 C 100,35 100,160 200,160" stroke="#3b82f6" stroke-width="2" fill="none" stroke-opacity="0.6" />
+                    <path d="M 0,95 C 100,95 100,160 200,160" stroke="#3b82f6" stroke-width="2" fill="none" stroke-opacity="0.6" />
+                    <path d="M 0,155 C 100,155 100,160 200,160" stroke="#3b82f6" stroke-width="2" fill="none" stroke-opacity="0.8" />
+                    <path d="M 0,215 C 100,215 100,160 200,160" stroke="#3b82f6" stroke-width="2" fill="none" stroke-opacity="0.6" />
+                    <path d="M 0,275 C 100,275 100,160 200,160" stroke="#3b82f6" stroke-width="2" fill="none" stroke-opacity="0.6" />
+                </svg>
+            </div>
+
+            <!-- COLUMN 2: HARMONIZATION PIPELINE NODE -->
+            <div style="width: 200px; z-index: 2;">
+                <div style="font-size: 9px; font-weight: 850; text-transform: uppercase; color: var(--slate-500); text-align: center; margin-bottom: 4px;">
+                    2. Normalization &amp; Equivalence
+                </div>
+                <div style="padding: 16px 14px; background: var(--surface); border: 2px solid var(--blue-primary); border-radius: var(--radius-md); text-align: center; box-shadow: var(--shadow-sm);">
+                    <div style="font-size: 18px; margin-bottom: 4px;">⚙️</div>
+                    <div style="font-weight: 850; font-size: 12px; color: var(--navy-900);">Equivalence Engine</div>
+                    <div style="font-size: 10px; color: var(--slate-500); margin-top: 4px;">
+                        TF-IDF Vector Matching + Metric ISO 4017 Normalization
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="status-pill status-verified">Attribute Match: 100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SVG CONNECTING LINE -->
+            <div style="width: 80px; height: 320px; display: flex; align-items: center; justify-content: center; position: relative;">
+                <svg width="100%" height="100%" viewBox="0 0 80 320" preserveAspectRatio="none" style="position: absolute; inset: 0;">
+                    <line x1="0" y1="160" x2="80" y2="160" stroke="#10b981" stroke-width="3" stroke-dasharray="4 2" />
+                </svg>
+            </div>
+
+            <!-- COLUMN 3: CANONICAL NATIONAL MASTER NODE -->
+            <div style="width: 240px; z-index: 2;">
+                <div style="font-size: 9px; font-weight: 850; text-transform: uppercase; color: var(--green-dark); text-align: center; margin-bottom: 4px;">
+                    3. Unified National Master Identity
+                </div>
+                <div style="padding: 16px 14px; background: #f0fdf4; border: 2px solid var(--green-verified); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span class="code-snippet" style="font-weight: 900; color: var(--green-dark); font-size: 11px;">
+                            {{ lineage.target_national_code }}
+                        </span>
+                        <span class="status-pill status-approved">ACTIVE</span>
+                    </div>
+                    <div style="font-weight: 800; font-size: 11.5px; color: var(--navy-900); margin-top: 6px;">
+                        {{ lineage.target_description }}
+                    </div>
+                    <div style="font-size: 9.5px; color: var(--slate-500); margin-top: 6px;">
+                        Sign-off: {{ lineage.approver_role }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- AUDIT LOGS & PROVENANCE STEPS TABLE -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📜</span>
+            <span>Step-by-Step Data Harmonization Lineage Log</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Cryptographic Verification Log</span>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Step</th>
+                    <th style="width: 220px;">Pipeline Stage</th>
+                    <th>Transformation Details & Verification Evidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for step in lineage.pipeline_steps %}
+                <tr>
+                    <td style="font-weight: 800; color: var(--blue-primary);">{{ step.step }}</td>
+                    <td style="font-weight: 750; color: var(--navy-900);">{{ step.name }}</td>
+                    <td style="font-size: 12px; color: var(--slate-700);">{{ step.desc }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

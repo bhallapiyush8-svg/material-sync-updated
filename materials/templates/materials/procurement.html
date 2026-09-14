@@ -1,0 +1,218 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Procurement Intelligence & Price Variance | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>📈</span>
+            <span>National Procurement Benchmark &bull; Cross-CPSE Price Intelligence</span>
+        </div>
+        <h1 class="page-title">Procurement Intelligence & Price Variance</h1>
+        <p class="page-subtitle">
+            Surfaces historical purchase order unit price disparities for identical normalized materials across Indian CPSEs to enable unified rate contracts and volume consolidation.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div class="data-honesty-banner">
+            <span>ℹ️</span>
+            <span>Synthetic Demonstration Dataset &bull; Aggregated Sample POs</span>
+        </div>
+    </div>
+</div>
+
+<!-- EXECUTIVE PROCUREMENT KPI STRIP -->
+<div class="kpi-strip">
+    <div class="kpi-card accent-green">
+        <div class="kpi-label">
+            <span>Unified Rate Savings Opportunity</span>
+            <span>₹</span>
+        </div>
+        <div class="kpi-value">₹{{ total_procurement_savings|floatformat:0 }}</div>
+        <div class="kpi-footer-note">
+            <span>Via GeM / Inter-CPSE Joint Tenders</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-red">
+        <div class="kpi-label">
+            <span>High Variance Items</span>
+            <span>⚠️</span>
+        </div>
+        <div class="kpi-value">{{ high_variance_count }} Categories</div>
+        <div class="kpi-footer-note">
+            <span style="color: var(--red-blocked); font-weight: 700;">Disparity > 50%</span>
+            <span>across identical specs</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-blue">
+        <div class="kpi-label">
+            <span>Analyzed Material Master Lines</span>
+            <span>📦</span>
+        </div>
+        <div class="kpi-value">{{ benchmarks|length }} Benchmark Items</div>
+        <div class="kpi-footer-note">
+            <span>Cross-referenced over 16 CPSE Purchase Orders</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-saffron">
+        <div class="kpi-label">
+            <span>Max Single-Item Disparity</span>
+            <span>⚡</span>
+        </div>
+        <div class="kpi-value">153.3%</div>
+        <div class="kpi-footer-note">
+            <span>Deep Groove Ball Bearing 6205-2RS</span>
+        </div>
+    </div>
+</div>
+
+<!-- DETAILED ITEM INSPECTOR WITH PRICE VARIANCE COMPARISON -->
+<div class="card" style="border-top: 3px solid var(--navy-800); margin-bottom: 22px;">
+    <div class="card-header">
+        <div>
+            <div class="card-title">
+                <span>🔍</span>
+                <span>Standardized Material: {{ selected_item.description }}</span>
+            </div>
+            <div class="card-subtitle">
+                Canonical National Code: <span class="code-snippet">{{ selected_item.code }}</span> &bull; Category: <strong>{{ selected_item.category }}</strong>
+            </div>
+        </div>
+        {% if selected_item.status == 'HIGH_VARIANCE' %}
+            <span class="status-pill status-blocked" style="font-size: 11px; padding: 4px 10px;">
+                ⚠️ HIGH PRICE VARIANCE (+{{ selected_item.variance_pct }}%)
+            </span>
+        {% else %}
+            <span class="status-pill status-warning" style="font-size: 11px; padding: 4px 10px;">
+                MODERATE VARIANCE (+{{ selected_item.variance_pct }}%)
+            </span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        
+        <div style="background: #fafbfc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--slate-800); line-height: 1.5;">
+            <strong>Procurement Intelligence Finding:</strong> {{ selected_item.explanation }}
+        </div>
+
+        <!-- 4-CPSE COMPARATIVE PRICE STRIP -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px;">
+            {% for p in selected_item.prices %}
+            <div style="padding: 14px; background: var(--surface); border: 1px solid {% if p.price == selected_item.min_price %}#86efac; border-top: 3px solid var(--green-verified);{% elif p.price == selected_item.max_price %}#fca5a5; border-top: 3px solid var(--red-blocked);{% else %}var(--border); border-top: 3px solid var(--blue-primary);{% endif %} border-radius: var(--radius-md);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 13px; font-weight: 900; color: var(--navy-900);">{{ p.cpse }}</span>
+                    {% if p.price == selected_item.min_price %}
+                        <span class="status-pill status-approved">Best Price (Benchmark)</span>
+                    {% elif p.price == selected_item.max_price %}
+                        <span class="status-pill status-rejected">Highest PO Rate</span>
+                    {% else %}
+                        <span class="status-pill status-equivalent">Intermediate</span>
+                    {% endif %}
+                </div>
+                <div style="font-size: 24px; font-weight: 900; color: var(--navy-900); font-variant-numeric: tabular-nums;">
+                    ₹{{ p.price|floatformat:2 }}
+                </div>
+                <div style="font-size: 10px; color: var(--slate-500); margin-top: 6px;">
+                    PO: <span class="code-snippet" style="font-size: 9px;">{{ p.po_num }}</span><br>
+                    Batch Qty: {{ p.qty }} units &bull; Dated {{ p.po_date }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- VARIANCE METRIC BAR & SAVINGS POTENTIAL -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; padding: 14px; background: var(--slate-50); border: 1px solid var(--border); border-radius: var(--radius-md);">
+            <div>
+                <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-600); margin-bottom: 6px;">
+                    Price Variance Range Across CPSE Procurement (Min ₹{{ selected_item.min_price }} ➔ Max ₹{{ selected_item.max_price }})
+                </div>
+                <div style="height: 10px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-bottom: 6px;">
+                    <div style="width: {{ selected_item.variance_pct|floatformat:0 }}%; max-width: 100%; height: 100%; background: linear-gradient(90deg, var(--green-verified) 0%, var(--amber-warning) 50%, var(--red-blocked) 100%);"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--slate-500);">
+                    <span>Lowest: ONGC Rate ₹{{ selected_item.min_price }}</span>
+                    <span>Average: ₹{{ selected_item.avg_price }}</span>
+                    <span>Variance: +{{ selected_item.variance_pct }}%</span>
+                </div>
+            </div>
+
+            <div style="border-left: 1px solid var(--border); padding-left: 16px;">
+                <div style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: var(--slate-500);">Annual Joint Tender Opportunity</div>
+                <div style="font-size: 20px; font-weight: 900; color: var(--green-dark); margin-top: 2px;">
+                    ₹{{ selected_item.potential_joint_savings|floatformat:0 }}
+                </div>
+                <div style="font-size: 10px; color: var(--slate-500);">If all CPSEs leverage the benchmark frame rate</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ALL STANDARDIZED MATERIAL PRICE BENCHMARKS TABLE -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📋</span>
+            <span>National Material Master Cross-CPSE Price Variance Registry</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Click any item to inspect cross-entity variance</span>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Standardized Material Specification</th>
+                    <th style="width: 120px;">Category</th>
+                    <th style="width: 100px;">Min Rate</th>
+                    <th style="width: 100px;">Max Rate</th>
+                    <th style="width: 120px;">Price Variance</th>
+                    <th style="width: 130px;">Joint Savings Opt</th>
+                    <th style="width: 90px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in benchmarks %}
+                <tr style="{% if b.code == selected_item.code %}background: #f0f7ff;{% endif %}">
+                    <td>
+                        <div style="font-weight: 750; color: var(--navy-900); font-size: 12px;">
+                            {{ b.description }}
+                        </div>
+                        <div class="code-snippet" style="font-size: 9.5px; margin-top: 2px; display: inline-block;">
+                            {{ b.code }}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 10.5px; font-weight: 750; color: var(--slate-600);">{{ b.category }}</span>
+                    </td>
+                    <td style="font-weight: 750; color: var(--green-verified); font-size: 12px;">
+                        ₹{{ b.min_price|floatformat:0 }}
+                    </td>
+                    <td style="font-weight: 750; color: var(--red-blocked); font-size: 12px;">
+                        ₹{{ b.max_price|floatformat:0 }}
+                    </td>
+                    <td>
+                        {% if b.status == 'HIGH_VARIANCE' %}
+                            <span class="status-pill status-blocked" style="font-size: 10px;">+{{ b.variance_pct }}% HIGH</span>
+                        {% else %}
+                            <span class="status-pill status-warning" style="font-size: 10px;">+{{ b.variance_pct }}% MOD</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: 850; color: var(--green-dark); font-size: 12px;">
+                        ₹{{ b.potential_joint_savings|floatformat:0 }}
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'procurement' %}?code={{ b.code }}" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 10.5px;">
+                            Inspect
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

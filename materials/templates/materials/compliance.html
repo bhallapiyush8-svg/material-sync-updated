@@ -1,0 +1,182 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Safety & Standards Validation | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>🛡️</span>
+            <span>Safety &amp; Standards Validation</span>
+        </div>
+        <h1 class="page-title">Digital Compliance Twin &amp; Safety Guardrails</h1>
+        <p class="page-subtitle">
+            Checks whether a proposed material substitution meets mandatory safety standards (NACE MR0175, ASME B16.34, API 6D, ISO 15156) before a cross-PSU transfer is approved.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div class="data-honesty-banner">
+            <span>⚠️</span>
+            <span>Note: Safety standards override AI similarity scores</span>
+        </div>
+    </div>
+</div>
+
+<!-- COMPLIANCE EVALUATOR CONTROLS -->
+<div class="card" style="border-top: 3px solid var(--navy-800); margin-bottom: 22px;">
+    <div class="card-header">
+        <div class="card-title">
+            <span>⚙️</span>
+            <span>Select material type and operating condition</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Checks {{ total_rules }} engineering compliance rules</span>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{% url 'compliance' %}" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: flex-end;">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Material type</label>
+                <select name="material_class" class="form-select" style="font-weight: 700;">
+                    {% for mc in material_classes %}
+                        <option value="{{ mc.value }}" {% if mc.value == selected_class %}selected{% endif %}>
+                            {{ mc.label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Operating condition</label>
+                <select name="condition" class="form-select" style="font-weight: 700;">
+                    {% for cond in conditions %}
+                        <option value="{{ cond.value }}" {% if cond.value == selected_condition %}selected{% endif %}>
+                            {{ cond.label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="height: 35px;">
+                Run safety check
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- EVALUATION OUTCOME BANNER -->
+<div class="card" style="border-left: 4px solid {% if blocked %}var(--red-blocked){% elif review_count > 0 %}var(--amber-warning){% else %}var(--green-verified){% endif %}; margin-bottom: 22px;">
+    <div style="padding: 16px 20px; background: {% if blocked %}#fef2f2{% elif review_count > 0 %}#fffbeb{% else %}#f0fdf4{% endif %}; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 700; color: var(--slate-600);">
+                    Result:
+                </span>
+                {% if blocked %}
+                    <span class="status-pill status-blocked" style="font-size: 12px; padding: 4px 12px; font-weight: 900; letter-spacing: 0.5px;">
+                        ✕ Match blocked
+                    </span>
+                {% elif review_count > 0 %}
+                    <span class="status-pill status-warning" style="font-size: 12px; padding: 4px 12px; font-weight: 900; letter-spacing: 0.5px;">
+                        ⏳ Review required
+                    </span>
+                {% else %}
+                    <span class="status-pill status-verified" style="font-size: 12px; padding: 4px 12px; font-weight: 900; letter-spacing: 0.5px;">
+                        ✓ Safety pass
+                    </span>
+                {% endif %}
+            </div>
+            <div style="font-size: 12.5px; color: var(--slate-800); font-weight: 600; line-height: 1.5;">
+                {{ summary_text }}
+            </div>
+        </div>
+        <div style="text-align: right; flex-shrink: 0;">
+            <div style="font-size: 22px; font-weight: 900; color: var(--navy-900);">
+                {{ checks|length }} rules checked
+            </div>
+            <div style="font-size: 10.5px; color: var(--slate-500);">
+                {{ pass_count }} passed &bull; {{ review_count }} warnings &bull; {% if blocked %}1+ blockers{% else %}0 blockers{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EVALUATED COMPLIANCE RULES BREAKDOWN -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>Rules checked for {{ selected_class }} — {{ selected_condition }}</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Engineering code requirements</span>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 130px;">If this fails</th>
+                    <th style="width: 240px;">Standard</th>
+                    <th>Rule description</th>
+                    <th style="width: 140px; text-align: right;">Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for check in checks %}
+                <tr>
+                    <td>
+                        {% if check.passed %}
+                            {% if check.severity == 'BLOCKING' %}
+                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 700; background: #f1f5f9; color: var(--slate-600); border: 1px solid var(--slate-300);">Would block</span>
+                            {% else %}
+                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 700; background: #f1f5f9; color: var(--slate-600); border: 1px solid var(--slate-300);">Would warn</span>
+                            {% endif %}
+                        {% else %}
+                            {% if check.severity == 'BLOCKING' %}
+                                <span class="status-pill status-blocked">Blocking</span>
+                            {% else %}
+                                <span class="status-pill status-warning">Warning</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: 750; color: var(--navy-900);">
+                        {{ check.requirement }}
+                    </td>
+                    <td style="font-size: 12px; color: var(--slate-700); line-height: 1.5;">
+                        {{ check.rule_text }}
+                    </td>
+                    <td style="text-align: right;">
+                        {% if check.passed %}
+                            <span class="status-pill status-verified">✓ Passed</span>
+                        {% elif check.severity == 'BLOCKING' %}
+                            <span class="status-pill status-blocked">✕ Blocked</span>
+                        {% else %}
+                            <span class="status-pill status-warning">⏳ Review</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 24px; color: var(--slate-500);">
+                        No specific compliance checks apply to this combination. Baseline standards apply.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- WHY THIS IS A KEY DIFFERENTIATOR BANNER -->
+<div class="card" style="background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%); margin-top: 20px;">
+    <div class="card-body" style="padding: 16px 20px;">
+        <div style="font-size: 12px; font-weight: 800; color: var(--navy-900); margin-bottom: 6px;">
+            Why AI similarity alone isn't enough
+        </div>
+        <p style="font-size: 12px; color: var(--slate-700); line-height: 1.6; margin-bottom: 8px;">
+            A generic AI model will rate an <em>"SS304 Ball Valve"</em> and an <em>"SS316 Ball Valve"</em> as <strong>94%+ similar</strong> because the text looks nearly identical. But substituting SS304 into an ONGC offshore sour gas pipeline causes hydrogen-induced sulfide stress cracking (SSC) within weeks — a catastrophic failure.
+        </p>
+        <p style="font-size: 12px; color: var(--slate-700); line-height: 1.6;">
+            MaterialSync pairs AI text matching with this <strong>compliance twin</strong> so no inventory transfer quietly bypasses a safety standard.
+        </p>
+    </div>
+</div>
+{% endblock %}

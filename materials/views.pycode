@@ -1,0 +1,352 @@
+from django.contrib import messages
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render,
+)
+
+from .models import (
+    Approval,
+    AuditLog,
+    Material,
+    MaterialGroup,
+    MaterialMatch,
+    NationalMaterial,
+)
+
+
+def dashboard(request):
+    groups = (
+        MaterialGroup.objects
+        .prefetch_related(
+            "members__material__cpse"
+        )
+        .order_by("-created_at")
+    )
+
+    national_materials = (
+        NationalMaterial.objects
+        .order_by("-created_at")
+    )
+
+    context = {
+        "groups": groups,
+        "national_materials": national_materials,
+        "material_count": Material.objects.count(),
+        "match_count": MaterialMatch.objects.count(),
+        "group_count": groups.count(),
+        "national_count": national_materials.count(),
+        "pending_count": national_materials.filter(
+            status="PENDING_APPROVAL"
+        ).count(),
+        "approved_count": national_materials.filter(
+            status="APPROVED"
+        ).count(),
+        "rejected_count": national_materials.filter(
+            status="REJECTED"
+        ).count(),
+    }
+
+    return render(
+        request,
+        "materials/dashboard.html",
+        context,
+    )
+
+
+def group_detail(request, group_id):
+    group = get_object_or_404(
+        MaterialGroup.objects.prefetch_related(
+            "members__material__cpse"
+        ),
+        id=group_id,
+    )
+
+    materials = [
+        member.material
+        for member in group.members.all()
+    ]
+
+    proposed_national = (
+        NationalMaterial.objects
+        .filter(
+            cpse_mappings__material__in=materials
+        )
+        .distinct()
+        .first()
+    )
+
+    return render(
+        request,
+        "materials/group_detail.html",
+        {
+            "group": group,
+            "proposed_national": proposed_national,
+        },
+    )
+
+
+def national_material_detail(request, material_id):
+    national_material = get_object_or_404(
+        NationalMaterial.objects.prefetch_related(
+            "cpse_mappings__material__cpse"
+        ),
+        id=material_id,
+    )
+
+    mappings = (
+        national_material.cpse_mappings
+        .select_related(
+            "material",
+            "material__cpse",
+        )
+        .all()
+    )
+
+    source_materials = [
+        mapping.material
+        for mapping in mappings
+    ]
+
+    groups = (
+        MaterialGroup.objects
+        .filter(
+            members__material__in=source_materials
+        )
+        .distinct()
+    )
+
+    latest_approval = (
+        Approval.objects
+        .filter(
+            national_material=national_material
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    approval_history = (
+        Approval.objects
+        .filter(
+            national_material=national_material
+        )
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "materials/national_material_detail.html",
+        {
+            "national_material": national_material,
+            "mappings": mappings,
+            "groups": groups,
+            "latest_approval": latest_approval,
+            "approval_history": approval_history,
+        },
+    )
+
+
+def review_national_material(request, material_id):
+    national_material = get_object_or_404(
+        NationalMaterial.objects.prefetch_related(
+            "cpse_mappings__material__cpse"
+        ),
+        id=material_id,
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "national_material_detail",
+            material_id=material_id,
+        )
+
+    action = request.POST.get("action", "").strip().upper()
+    reviewer = request.POST.get("reviewer", "").strip()
+    comments = request.POST.get("comments", "").strip()
+
+    valid_actions = {
+        "APPROVE",
+        "REJECT",
+        "MODIFY",
+    }
+
+    if action not in valid_actions:
+        messages.error(
+            request,
+            "Invalid review action.",
+        )
+        return redirect(
+            "national_material_detail",
+            material_id=material_id,
+        )
+
+    if not reviewer:
+        messages.error(
+            request,
+            "Please enter the reviewer name.",
+        )
+        return redirect(
+            "national_material_detail",
+            material_id=material_id,
+        )
+
+    old_status = national_material.status
+    old_description = (
+        national_material.standardized_description
+    )
+    old_code = national_material.national_code
+
+    if action == "APPROVE":
+        national_material.status = "APPROVED"
+
+    elif action == "REJECT":
+        national_material.status = "REJECTED"
+
+    elif action == "MODIFY":
+        new_description = (
+            request.POST
+            .get("standardized_description", "")
+            .strip()
+        )
+
+        new_code = (
+            request.POST
+            .get("national_code", "")
+            .strip()
+        )
+
+        if not new_description:
+            messages.error(
+                request,
+                "Standardized description is required.",
+            )
+            return redirect(
+                "national_material_detail",
+                material_id=material_id,
+            )
+
+        if not new_code:
+            messages.error(
+                request,
+                "National material code is required.",
+            )
+            return redirect(
+                "national_material_detail",
+                material_id=material_id,
+            )
+
+        conflicting_material = (
+            NationalMaterial.objects
+            .filter(
+                national_code=new_code
+            )
+            .exclude(
+                id=national_material.id
+            )
+            .first()
+        )
+
+        if conflicting_material:
+            messages.error(
+                request,
+                "That national material code already exists.",
+            )
+            return redirect(
+                "national_material_detail",
+                material_id=material_id,
+            )
+
+        national_material.standardized_description = (
+            new_description
+        )
+
+        national_material.national_code = new_code
+
+        national_material.status = (
+            "PENDING_APPROVAL"
+        )
+
+    national_material.save()
+
+    approval = Approval.objects.create(
+        national_material=national_material,
+        action=action,
+        reviewer=reviewer,
+        comments=comments,
+    )
+
+    AuditLog.objects.create(
+        action=f"NATIONAL_MATERIAL_{action}",
+        entity_type="NationalMaterial",
+        entity_id=str(national_material.id),
+        user=reviewer,
+        details={
+            "approval_id": approval.id,
+            "old_status": old_status,
+            "new_status": national_material.status,
+            "old_national_code": old_code,
+            "new_national_code":
+                national_material.national_code,
+            "old_description": old_description,
+            "new_description":
+                national_material.standardized_description,
+            "comments": comments,
+        },
+    )
+
+    # Update candidate groups associated with this
+    # national material.
+    source_materials = (
+        national_material.cpse_mappings
+        .values_list(
+            "material_id",
+            flat=True,
+        )
+    )
+
+    related_groups = (
+        MaterialGroup.objects
+        .filter(
+            members__material_id__in=source_materials
+        )
+        .distinct()
+    )
+
+    if action == "APPROVE":
+        related_groups.update(
+            status="APPROVED"
+        )
+
+    elif action == "REJECT":
+        related_groups.update(
+            status="REJECTED"
+        )
+
+    else:
+        related_groups.update(
+            status="PENDING_REVIEW"
+        )
+
+    if action == "APPROVE":
+        messages.success(
+            request,
+            "National material approved successfully.",
+        )
+
+    elif action == "REJECT":
+        messages.success(
+            request,
+            "National material rejected.",
+        )
+
+    else:
+        messages.success(
+            request,
+            "National material updated and returned "
+            "to pending approval.",
+        )
+
+    return redirect(
+        "national_material_detail",
+        material_id=material_id,
+    )

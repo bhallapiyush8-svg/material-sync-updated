@@ -1,0 +1,116 @@
+{% extends "materials/base.html" %}
+{% load static %}
+
+{% block title %}Officer Sign-On | Engineering Scrutiny Authentication | MaterialSync{% endblock %}
+
+{% block content %}
+<div style="min-height: 72vh; display: flex; align-items: center; justify-content: center; padding: 24px 0;">
+    <div style="width: 100%; max-width: 540px;">
+
+        <!-- OFFICIAL EMBLEM & PORTAL BANNER -->
+        <div style="text-align: center; margin-bottom: 22px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: #0a2540; color: #ffffff; padding: 6px 16px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.6px; margin-bottom: 12px; border: 1px solid #071d3a;">
+                <span>भारत सरकार &bull; लोक उद्यम विभाग</span>
+                <span style="opacity: 0.6;">|</span>
+                <span>SIH-2026 SECURE ACCESS</span>
+            </div>
+            <h1 class="page-title" style="font-size: 24px !important; margin: 4px 0 6px !important;">Technical Scrutiny Sign-On</h1>
+            <p class="page-subtitle" style="margin: 0; font-size: 13px;">
+                Designated Class-I Materials Management &amp; Discipline Engineering Officer Authentication
+            </p>
+        </div>
+
+        <!-- AUTHENTICATION CARD -->
+        <div class="card" style="border-top: 4px solid #0a2540; box-shadow: 0 4px 12px rgba(10,37,64,0.08) !important;">
+            <div class="card-header" style="background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-weight: 800; color: #0a2540; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                    <span>🔒</span>
+                    <span>Officer Credential Verification</span>
+                </div>
+                <span class="status-pill status-verified" style="font-size: 10px;">Level 2 Authority</span>
+            </div>
+
+            <div class="card-body" style="padding: 24px 28px;">
+                {% if error %}
+                <div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-left: 4px solid #b91c1c; border-radius: 4px; padding: 12px 14px; margin-bottom: 20px; font-size: 12px; color: #991b1b; font-weight: 600;">
+                    ⚠️ {{ error }}
+                </div>
+                {% endif %}
+
+                <!-- ONE-CLICK QUICK DEMO LOGIN BUTTON FOR SIH EVALUATION -->
+                <form method="POST" action="{% url 'engineer_login' %}" style="margin-bottom: 20px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next|default:'/review/workbench/' }}">
+                    <input type="hidden" name="employee_id" value="{{ demo_employee_id }}">
+                    <input type="hidden" name="password" value="{{ demo_password }}">
+                    <input type="hidden" name="organisation" value="ONGC">
+                    <input type="hidden" name="role" value="Chief Materials Manager">
+                    <button type="submit" class="btn btn-saffron" style="width: 100%; justify-content: center; padding: 12px; font-size: 13px; font-weight: 800; box-shadow: 0 2px 6px rgba(234,88,12,0.25);">
+                        ⚡ 1-Click Officer Sign-In (Er. Rajesh Sharma — ONGC)
+                    </button>
+                </form>
+
+                <div style="display: flex; align-items: center; gap: 12px; margin: 18px 0;">
+                    <div style="flex: 1; height: 1px; background: #cbd5e1;"></div>
+                    <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">or enter credentials</span>
+                    <div style="flex: 1; height: 1px; background: #cbd5e1;"></div>
+                </div>
+
+                <form method="POST" action="{% url 'engineer_login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next|default:'/review/workbench/' }}">
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 5px;">
+                            Government Employee / Officer ID <span style="color:#b91c1c;">*</span>
+                        </label>
+                        <input type="text" name="employee_id" value="{{ demo_employee_id }}" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600; color: #0a2540;" required>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 5px;">
+                            Security Password <span style="color:#b91c1c;">*</span>
+                        </label>
+                        <input type="password" name="password" value="{{ demo_password }}" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600; color: #0a2540;" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 5px;">Cadre PSU</label>
+                            <select name="organisation" style="width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 600; color: #0a2540;">
+                                {% for psu in psu_choices %}<option value="{{ psu }}" {% if psu == 'ONGC' %}selected{% endif %}>{{ psu }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 5px;">Designated Role</label>
+                            <select name="role" style="width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 600; color: #0a2540;">
+                                {% for role in role_choices %}<option value="{{ role }}" {% if 'Chief' in role or 'Senior' in role %}selected{% endif %}>{{ role }}</option>{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px 0; font-size: 13px;">
+                        <span>✓ Verify &amp; Access Technical Scrutiny Workbench</span>
+                    </button>
+                </form>
+            </div>
+
+            <div style="background: #f8fafc; border-top: 1px solid #cbd5e1; padding: 12px 28px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                <a href="{% url 'dashboard' %}" style="color: #475569; text-decoration: none; font-weight: 600;">&larr; Return to Workspace Control Center</a>
+                <a href="{% url 'home' %}" style="color: #475569; text-decoration: none; font-weight: 600;">Public Portal Home</a>
+            </div>
+        </div>
+
+        <!-- DEMO NOTICE & AUDIT BOUNDARY -->
+        <div style="margin-top: 18px; background: #fffbeb; border: 1.5px solid #fcd34d; border-left: 4px solid #ea580c; border-radius: 4px; padding: 14px 18px;">
+            <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #92400e; letter-spacing: 0.6px; margin-bottom: 6px;">
+                Statutory Authority Notice &bull; SIH 2026 Evaluation Prototype
+            </div>
+            <div style="font-size: 11.5px; color: #78350f; line-height: 1.5;">
+                Actions performed in the Engineering Scrutiny Workbench are cryptographically committed to the permanent Council Audit Trail with the logged officer's Employee ID, Cadre PSU, and timestamp.
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

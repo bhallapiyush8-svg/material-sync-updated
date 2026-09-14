@@ -1,0 +1,177 @@
+﻿{% extends "materials/base.html" %}
+
+{% block title %}Material Search{% if query %} — {{ query }}{% endif %} | MaterialSync{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="page-header-row" style="margin-bottom:18px;">
+    <div>
+        <div class="page-kicker"><span>&#128269;</span><span>Global material search</span></div>
+        <h1 class="page-title">Material Search</h1>
+        <p class="page-subtitle">Search across PSU source catalogues and the National Material Master by code, description, or category.</p>
+    </div>
+</div>
+
+<!-- SEARCH FORM (FULL PAGE VERSION) -->
+<div class="card" style="margin-bottom:22px;">
+    <div class="card-body" style="padding:16px 20px;">
+        <form method="GET" action="{% url 'search' %}" style="display:flex;gap:10px;align-items:center;">
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                class="form-control"
+                placeholder="Search material code, description, National Material ID, category..."
+                style="flex:1;font-size:13px;"
+                autofocus
+            >
+            <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Search</button>
+            {% if query %}<a href="{% url 'search' %}" class="btn btn-secondary">Clear</a>{% endif %}
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<!-- RESULTS SUMMARY -->
+<div style="margin-bottom:16px;font-size:12px;color:var(--gov-slate-500);">
+    {% if total_results > 0 %}
+        Found <strong style="color:var(--gov-navy-900);">{{ total_results }}</strong> result{{ total_results|pluralize }} for <strong>"{{ query }}"</strong>
+        — {{ material_results|length }} in Source Catalogue, {{ national_results|length }} in National Master
+    {% else %}
+        No results found for <strong>"{{ query }}"</strong>. Try a broader term such as "BOLT", "VALVE", or "SS304".
+    {% endif %}
+</div>
+
+{% if material_results %}
+<!-- SOURCE CATALOGUE RESULTS -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+        <div class="card-title"><span>&#9670;</span><span>Source catalogue — PSU material records</span></div>
+        <span class="status-pill status-pending">{{ material_results|length }} result{{ material_results|length|pluralize }}</span>
+    </div>
+    <div style="padding:0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:140px;">Material Code</th>
+                    <th style="width:80px;">PSU</th>
+                    <th>Description</th>
+                    <th style="width:100px;">Category</th>
+                    <th style="width:60px;">Unit</th>
+                    <th style="width:120px;">National ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mat in material_results %}
+                <tr>
+                    <td>
+                        <a href="{% url 'material_detail' mat.id %}" class="code-snippet" style="font-weight:800;color:var(--gov-navy-900);">
+                            {{ mat.material_code }}
+                        </a>
+                    </td>
+                    <td>
+                        <span style="font-size:10.5px;font-weight:700;color:var(--gov-navy-800);">{{ mat.cpse.code }}</span>
+                    </td>
+                    <td style="font-size:12px;color:var(--gov-slate-800);">{{ mat.description }}</td>
+                    <td>
+                        {% with cat=mat.attributes.category %}
+                        {% if cat %}<span style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-600);">{{ cat }}</span>{% else %}<span style="color:var(--gov-slate-400);">—</span>{% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="font-size:11px;color:var(--gov-slate-600);">{{ mat.unit|default:"—" }}</td>
+                    <td>
+                        {% with nm=mat.national_mappings.first %}
+                        {% if nm %}
+                            <a href="{% url 'national_material_detail' nm.national_material.id %}" class="code-snippet" style="font-size:10px;">{{ nm.national_material.national_code }}</a>
+                        {% else %}
+                            <span style="color:var(--gov-slate-400);font-size:10px;">Not mapped</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if national_results %}
+<!-- NATIONAL MASTER RESULTS -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title"><span>&#9672;</span><span>National Material Master</span></div>
+        <span class="status-pill status-verified">{{ national_results|length }} result{{ national_results|length|pluralize }}</span>
+    </div>
+    <div style="padding:0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:170px;">National Code</th>
+                    <th>Standardized Description</th>
+                    <th style="width:110px;">Category</th>
+                    <th style="width:90px;">PSU Sources</th>
+                    <th style="width:100px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nm in national_results %}
+                <tr>
+                    <td>
+                        <a href="{% url 'national_material_detail' nm.id %}" class="code-snippet" style="font-weight:800;color:var(--gov-navy-900);">
+                            {{ nm.national_code }}
+                        </a>
+                    </td>
+                    <td style="font-size:12px;color:var(--gov-slate-800);">{{ nm.standardized_description }}</td>
+                    <td style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--gov-slate-600);">{{ nm.category }}</td>
+                    <td style="font-weight:700;color:var(--gov-navy-700);font-size:11px;">{{ nm.cpse_mappings.count }}</td>
+                    <td>
+                        {% if nm.status == "APPROVED" %}
+                            <span class="status-pill status-approved">Approved</span>
+                        {% elif nm.status == "REJECTED" %}
+                            <span class="status-pill status-rejected">Rejected</span>
+                        {% else %}
+                            <span class="status-pill status-pending">Pending review</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if total_results == 0 %}
+<!-- NO RESULTS -->
+<div class="card">
+    <div class="card-body" style="text-align:center;padding:48px 24px;color:var(--gov-slate-500);">
+        <div style="font-size:32px;margin-bottom:12px;">&#128270;</div>
+        <div style="font-size:14px;font-weight:700;color:var(--gov-navy-900);margin-bottom:8px;">No records found for "{{ query }}"</div>
+        <div style="font-size:12px;">Try searching by material code (e.g. <strong>ONGC-1001</strong>), description keyword (e.g. <strong>HEX BOLT</strong>), or National Material ID (e.g. <strong>NM-</strong>).</div>
+        <div style="margin-top:20px;display:flex;justify-content:center;gap:10px;">
+            <a href="{% url 'source_catalogue' %}" class="btn btn-secondary btn-sm">Browse source catalogue</a>
+            <a href="{% url 'national_master' %}" class="btn btn-secondary btn-sm">Browse National Master</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<!-- EMPTY STATE — NO QUERY YET -->
+<div class="card">
+    <div class="card-body" style="text-align:center;padding:48px 24px;color:var(--gov-slate-500);">
+        <div style="font-size:14px;font-weight:700;color:var(--gov-navy-900);margin-bottom:8px;">Enter a search term above</div>
+        <div style="font-size:12px;margin-bottom:20px;">Examples: <strong>HEX BOLT</strong> · <strong>MAT-0042</strong> · <strong>NM-00012</strong> · <strong>SS304</strong> · <strong>BALL VALVE</strong></div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+            <a href="{% url 'search' %}?q=HEX+BOLT" class="btn btn-secondary btn-sm">HEX BOLT</a>
+            <a href="{% url 'search' %}?q=VALVE" class="btn btn-secondary btn-sm">VALVE</a>
+            <a href="{% url 'search' %}?q=SS304" class="btn btn-secondary btn-sm">SS304</a>
+            <a href="{% url 'search' %}?q=PIPE" class="btn btn-secondary btn-sm">PIPE</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

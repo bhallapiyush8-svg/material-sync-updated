@@ -1,0 +1,169 @@
+{% extends "materials/base.html" %}
+{% load static %}
+
+{% block title %}About MaterialSync | National CPSE Material Harmonization Grid{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: 0 auto;">
+
+    <!-- OFFICIAL GOV GAZETTE HEADER -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-top: 4px solid #ea580c; border-radius: 6px; padding: 20px 24px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; color: #c2410c; text-transform: uppercase; letter-spacing: 0.8px;">
+                    <span>Government of India</span>
+                    <span>&bull;</span>
+                    <span>Ministry of Petroleum and Natural Gas</span>
+                </div>
+                <h1 style="font-size: 26px; font-weight: 800; color: #0a2540; font-family: 'Noto Serif', Georgia, serif; margin: 6px 0 4px 0;">
+                    National CPSE Material Standardization Grid
+                </h1>
+                <p style="font-size: 13.5px; color: #334155; margin: 0; line-height: 1.5; font-weight: 500;">
+                    A unified engineering master data standardization and cross-enterprise surplus reallocation platform for India's Central Public Sector Enterprises.
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <span style="background: #dcfce7; color: #14532d; border: 1.5px solid #86efac; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 4px; display: inline-block;">
+                    ✓ SIH26099 Aligned
+                </span>
+                <div style="font-size: 10.5px; color: #64748b; margin-top: 4px; font-weight: 600;">Gov-Tech Prototype</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 REAL FINANCIAL & OPERATIONAL IMPACT METRICS -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;">
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 4px solid #0a2540; border-radius: 6px; padding: 14px 16px;">
+            <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569;">Target Capital Lockup</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0a2540; margin: 3px 0;">₹4,850+ Cr</div>
+            <div style="font-size: 11px; color: #334155;">Surplus spares across CPSEs</div>
+        </div>
+
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 4px solid #ea580c; border-radius: 6px; padding: 14px 16px;">
+            <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569;">Participating CPSEs</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0a2540; margin: 3px 0;">6 Entities</div>
+            <div style="font-size: 11px; color: #334155;">ONGC, IOCL, NTPC, SAIL, BHEL, BPCL</div>
+        </div>
+
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 4px solid #138808; border-radius: 6px; padding: 14px 16px;">
+            <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569;">Harmonized Spares</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0a2540; margin: 3px 0;">1,248 Items</div>
+            <div style="font-size: 11px; color: #334155;">Verified interchangeable parts</div>
+        </div>
+
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 4px solid #c2410c; border-radius: 6px; padding: 14px 16px;">
+            <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569;">Estimated Cost Avoidance</div>
+            <div style="font-size: 24px; font-weight: 800; color: #14532d; margin: 3px 0;">₹48.50 Cr</div>
+            <div style="font-size: 11px; color: #334155;">Avoided fresh tenders &amp; capex</div>
+        </div>
+    </div>
+
+    <!-- MANDATE & HOW IT WORKS (CLEAN & CONCISE) -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+        
+        <!-- THE PROBLEM -->
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 20px;">
+            <div style="font-size: 11px; font-weight: 800; color: #c2410c; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;">
+                The Challenge
+            </div>
+            <div style="font-size: 16px; font-weight: 800; color: #0a2540; margin-bottom: 8px;">
+                Unstandardized Catalogs &amp; Idle Spares
+            </div>
+            <p style="font-size: 13px; color: #334155; line-height: 1.6; margin: 0;">
+                Each CPSE maintains independent ERP item master codes (SAP MM, Oracle EBS). Because naming is unstandardized, one public enterprise often floats costly tenders or import orders for valves, fasteners, and flanges, while an identical or standard-equivalent spare sits idle in another CPSE's warehouse just a few hundred kilometers away.
+            </p>
+        </div>
+
+        <!-- THE SOLUTION -->
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 20px;">
+            <div style="font-size: 11px; font-weight: 800; color: #14532d; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;">
+                The Solution
+            </div>
+            <div style="font-size: 16px; font-weight: 800; color: #0a2540; margin-bottom: 8px;">
+                Common Material Identity &amp; Reallocation
+            </div>
+            <p style="font-size: 13px; color: #334155; line-height: 1.6; margin: 0;">
+                MaterialSync parses engineering specifications across CPSE catalogs, verifies physical compatibility under statutory codes (DIN 933, ASME B16.34, NACE MR0175), and enables direct inter-CPSE stock transfers—freeing up locked working capital and cutting procurement lead time from 14 weeks to 3 days.
+            </p>
+        </div>
+    </div>
+
+    <!-- 3-STEP OPERATIONAL FRAMEWORK -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+        <div style="font-size: 11px; font-weight: 800; color: #0a2540; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 14px;">
+            Standard Operating Framework &bull; 3 Core Stages
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 14px;">
+                <div style="font-size: 10px; font-weight: 800; color: #ea580c; text-transform: uppercase;">Stage 01</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0a2540; margin: 4px 0 6px 0;">Specification Normalization</div>
+                <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0;">
+                    Standardizes metallurgy, thread, pressure rating, and dimensions (DIN, ISO, ASME, IS) across CPSE catalogs.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 14px;">
+                <div style="font-size: 10px; font-weight: 800; color: #0a2540; text-transform: uppercase;">Stage 02</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0a2540; margin: 4px 0 6px 0;">Inter-CPSE Inventory Transfer</div>
+                <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0;">
+                    Pairs donor CPSE surplus with recipient procurement indents; coordinates CONCOR dedicated rail freight.
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 14px;">
+                <div style="font-size: 10px; font-weight: 800; color: #14532d; text-transform: uppercase;">Stage 03</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0a2540; margin: 4px 0 6px 0;">Gazetted Officer Sign-off</div>
+                <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0;">
+                    Class-I Materials Managers review and sign transfer indents with permanent SHA-256 CAG audit lineage.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK ACCESS TO LIVE VERIFICATION DEMOS -->
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div>
+                <div style="font-size: 11px; font-weight: 800; color: #c2410c; text-transform: uppercase;">Interactive Demonstration</div>
+                <div style="font-size: 16px; font-weight: 800; color: #0a2540;">Test Live Public Sector Benchmarks</div>
+            </div>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;">
+                Enter Full Workspace &rarr;
+            </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <a href="{% url 'comparator' %}?demo=identical" style="text-decoration: none; padding: 12px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; display: block;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #0a2540; font-size: 12.5px;">1. Fasteners (DIN 933)</strong>
+                    <span class="status-pill status-identical" style="font-size: 9.5px;">100% Match</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">ONGC vs NTPC Hex Bolt cross-match</div>
+            </a>
+
+            <a href="{% url 'comparator' %}?demo=equivalent" style="text-decoration: none; padding: 12px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; display: block;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #0a2540; font-size: 12.5px;">2. Valves (ASME B16.34)</strong>
+                    <span class="status-pill status-equivalent" style="font-size: 9.5px;">Equivalent</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Imperial (2") to Metric (DN50) equivalence</div>
+            </a>
+
+            <a href="{% url 'material_transfer' %}" style="text-decoration: none; padding: 12px; background: #fffaf5; border: 1.5px solid #fed7aa; border-radius: 6px; display: block;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #c2410c; font-size: 12.5px;">3. Inter-CPSE Transfer</strong>
+                    <span style="background: #fed7aa; color: #9a3412; font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 2px;">Transfer</span>
+                </div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">CONCOR rail freight routing &amp; capex saving</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- STATUTORY DISCLAIMER -->
+    <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 12px 16px; font-size: 11.5px; color: #475569; line-height: 1.5;">
+        <strong>Statutory Notice:</strong> MaterialSync is a software prototype developed for Smart India Hackathon 2026 under Problem Statement ID <strong>SIH26099</strong>. Reallocated inventories and logistics waybills are modeled for demonstration. Developed under DPE Guidelines &bull; Not an active production portal.
+    </div>
+
+</div>
+{% endblock %}

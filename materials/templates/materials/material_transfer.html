@@ -1,0 +1,229 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Inter-CPSE Material Transfer & Surplus Allocation | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- NOTIFICATION STRIP -->
+<div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 4px; padding: 10px 18px; margin-bottom: 20px; font-size: 11.5px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-weight: 800; color: #0a2540;">DPE Circular Logistics Gateway</span>
+        <span style="color: #94a3b8;">|</span>
+        <span style="color: #334155; font-weight: 600;">Inter-CPSE Capital Asset Reallocation Indent System</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="status-pill status-verified">✓ DPE Order 2026 Aligned</span>
+    </div>
+</div>
+
+<!-- PAGE TITLE -->
+<div class="page-header-row" style="margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1.5px solid #cbd5e1;">
+    <div>
+        <div class="page-kicker">
+            <span>Inter-Enterprise Circular Logistics</span>
+            <span>&bull;</span>
+            <span>DPE Mandate: Capital Lockup Reduction</span>
+        </div>
+        <h1 class="page-title">Inter-CPSE Material Transfer &amp; Reallocation Gateway</h1>
+        <p class="page-subtitle">
+            Directly routes verified surplus materials from donor CPSE yards to recipient CPSE facilities with active purchase requisitions, avoiding new procurement tenders and lowering logistics carbon footprints.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+        <span class="status-pill status-verified" style="font-size: 11px;">
+            ✓ GeM Circular Ready
+        </span>
+        <span style="font-size: 10.5px; color: #475569; font-weight: 600;">Ministry of Petroleum and Natural Gas Grid</span>
+    </div>
+</div>
+
+<!-- KPI SUMMARY STRIP (MAXIMUM CONTRAST) -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #14532d; border-radius: 6px; padding: 16px;">
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Available Transfer Surplus</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">5 Opportunities</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Ready for immediate dispatch</div>
+    </div>
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #ea580c; border-radius: 6px; padding: 16px;">
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Gross Avoided Capex</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">₹4,32,00,000</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Modeled procurement avoidance</div>
+    </div>
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #0a2540; border-radius: 6px; padding: 16px;">
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Average Transit Distance</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">1,358 km</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">CONCOR Dedicated Rail Freight</div>
+    </div>
+    <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #138808; border-radius: 6px; padding: 16px;">
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Avoided Scope 3 CO₂</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">184.2 tCO₂e</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Virgin metallurgical savings</div>
+    </div>
+</div>
+
+<!-- INTERACTIVE INITIATION OF CROSS-CPSE TRANSFER -->
+<div class="card" style="margin-bottom: 28px; border-top: 4px solid #ea580c;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 13.5px; font-weight: 800; color: #0a2540;">
+            Execute Inter-CPSE Material Transfer Indent
+        </div>
+        <span style="font-size: 11px; font-weight: 700; color: #0a2540; background: #fff; padding: 3px 8px; border-radius: 3px; border: 1px solid #cbd5e1;">
+            DPE Form DPE-TR-01
+        </span>
+    </div>
+    <div class="card-body" style="padding: 20px;">
+        <form method="POST" action="{% url 'material_transfer' %}" style="display: grid; grid-template-columns: 2fr 1fr 1.2fr auto; gap: 16px; align-items: flex-end;">
+            {% csrf_token %}
+            <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 750; color: #0a2540; margin-bottom: 6px;">
+                    Select Verified Cross-CPSE Transfer Item:
+                </label>
+                <select name="opportunity_id" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600; color: #0f172a;">
+                    {% for opp in opportunities %}
+                        <option value="{{ opp.id }}" {% if opp.id == selected_opp.id %}selected{% endif %}>
+                            [{{ opp.source_cpse }} &rarr; {{ opp.dest_cpse }}] {{ opp.description|truncatechars:60 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 750; color: #0a2540; margin-bottom: 6px;">
+                    Transfer Quantity (Units):
+                </label>
+                <input type="number" name="quantity" value="{{ selected_qty }}" min="1" max="{{ selected_opp.source_stock }}" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; font-weight: 700; color: #0f172a;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 750; color: #0a2540; margin-bottom: 6px;">
+                    Logistics Carrier:
+                </label>
+                <select name="carrier" style="width: 100%; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12px; color: #0f172a; font-weight: 600;">
+                    <option value="CONCOR">CONCOR (Indian Railways Dedicated Freight)</option>
+                    <option value="NATIONAL_ROADWAYS">National High-Priority Heavy Roadways</option>
+                    <option value="INTRA_COASTAL">Intra-Coastal Barge (Gujarat &rarr; Kochi)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" name="action" value="calculate" class="btn btn-secondary" style="height: 38px; padding: 0 16px;">
+                    Recalculate
+                </button>
+                <button type="submit" name="action" value="issue_memo" class="btn btn-saffron" style="height: 38px; padding: 0 18px;">
+                    Generate Transfer Memo &rarr;
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DETAILED TRANSFER SCHEMATIC (HIGH CONTRAST) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;">
+    <!-- SENDER & RECIPIENT SUMMARY -->
+    <div class="card" style="padding: 20px;">
+        <div style="font-size: 12px; font-weight: 800; color: #0a2540; text-transform: uppercase; margin-bottom: 14px; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 8px;">
+            Transfer Facility Routing
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 14px;">
+            <div style="text-align: left;">
+                <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase;">Donor CPSE (Surplus Stock)</span>
+                <div style="font-size: 17px; font-weight: 800; color: #0a2540; margin-top: 2px;">{{ selected_opp.source_cpse }}</div>
+                <div style="font-size: 12px; color: #334155; font-weight: 500;">{{ selected_opp.source_plant }}</div>
+                <div style="font-size: 11.5px; color: #15803d; font-weight: 700; margin-top: 4px;">Available Stock: {{ selected_opp.source_stock }} units</div>
+            </div>
+
+            <div style="font-size: 24px; color: #ea580c; font-weight: 800; padding: 0 16px;">
+                &rarr;
+            </div>
+
+            <div style="text-align: right;">
+                <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase;">Recipient CPSE (Active Indent)</span>
+                <div style="font-size: 17px; font-weight: 800; color: #0a2540; margin-top: 2px;">{{ selected_opp.dest_cpse }}</div>
+                <div style="font-size: 12px; color: #334155; font-weight: 500;">{{ selected_opp.dest_plant }}</div>
+                <div style="font-size: 11.5px; color: #dc2626; font-weight: 700; margin-top: 4px;">Pending Indent: {{ selected_opp.dest_requirement }} units</div>
+            </div>
+        </div>
+
+        <div style="font-size: 12.5px; color: #1e293b; line-height: 1.65;">
+            <strong>Material Description:</strong> {{ selected_opp.description }}<br/>
+            <strong>National Master Code:</strong> <code style="background:#f1f5f9; padding:2px 6px; border-radius:3px; font-weight:700; color:#0a2540;">{{ selected_opp.material_code }}</code><br/>
+            <strong>Logistics Transit Distance:</strong> {{ selected_opp.distance_km }} km (estimated transit time: 3.5 days via CONCOR)
+        </div>
+    </div>
+
+    <!-- FINANCIAL & EMISSIONS CLEARANCE -->
+    <div class="card" style="padding: 20px;">
+        <div style="font-size: 12px; font-weight: 800; color: #0a2540; text-transform: uppercase; margin-bottom: 14px; border-bottom: 1.5px solid #cbd5e1; padding-bottom: 8px;">
+            Financial Valuation &amp; Statutory Clearance
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 6px;">
+                <span style="font-size: 10.5px; font-weight: 800; color: #15803d; text-transform: uppercase;">Avoided Purchase Cost</span>
+                <div style="font-size: 22px; font-weight: 800; color: #14532d; margin-top: 2px;">₹{{ transfer_calc.avoided_purchase|floatformat:2 }}</div>
+                <div style="font-size: 11px; color: #334155; font-weight: 500;">{{ selected_qty }} units &times; ₹{{ selected_opp.unit_price }}</div>
+            </div>
+
+            <div style="background: #fffaf5; border: 1.5px solid #fed7aa; padding: 14px; border-radius: 6px;">
+                <span style="font-size: 10.5px; font-weight: 800; color: #c2410c; text-transform: uppercase;">Estimated Freight Cost</span>
+                <div style="font-size: 22px; font-weight: 800; color: #9a3412; margin-top: 2px;">₹{{ transfer_calc.transport_cost|floatformat:2 }}</div>
+                <div style="font-size: 11px; color: #334155; font-weight: 500;">{{ transfer_calc.total_weight_kg }} kg over {{ selected_opp.distance_km }} km</div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px;">
+            <span><strong>Net Value Realized by Exchequer:</strong></span>
+            <span style="font-size: 18px; font-weight: 800; color: #0a2540;">₹{{ transfer_calc.net_savings|floatformat:2 }}</span>
+        </div>
+
+        <div style="margin-top: 12px; font-size: 12px; color: #334155; line-height: 1.5;">
+            ✓ Technical equivalence verified under ASME/NACE standards.<br/>
+            ✓ Complies with DPE Inter-CPSE surplus asset transfer guidelines.
+        </div>
+    </div>
+</div>
+
+<!-- ALL ACTIVE CROSS-CPSE TRANSFER OPPORTUNITIES TABLE -->
+<div class="card" style="margin-bottom: 28px;">
+    <div class="card-header">
+        <div style="font-size: 13.5px; font-weight: 800; color: #0a2540;">
+            All Current Inter-CPSE Reallocation Opportunities
+        </div>
+    </div>
+    <div style="padding: 0; overflow-x: auto;">
+        <table class="gov-table" style="margin: 0;">
+            <thead>
+                <tr>
+                    <th style="width: 110px;">Transfer ID</th>
+                    <th>Material Description &amp; Code</th>
+                    <th style="width: 150px;">Donor CPSE</th>
+                    <th style="width: 150px;">Recipient CPSE</th>
+                    <th style="width: 110px;">Available / Req</th>
+                    <th style="width: 110px;">Unit Cost</th>
+                    <th style="width: 120px;">Est. Net Saving</th>
+                    <th style="width: 100px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for opp in opportunities %}
+                <tr>
+                    <td style="font-weight: 750; font-size: 11px; color: #0a2540;">{{ opp.id }}</td>
+                    <td>
+                        <strong style="color: #0f172a;">{{ opp.description }}</strong><br/>
+                        <code style="font-size: 10px; color: #475569; font-weight: 700;">{{ opp.material_code }}</code>
+                    </td>
+                    <td><strong style="color: #0a2540;">{{ opp.source_cpse }}</strong><br/><span style="font-size: 11px; color: #475569;">{{ opp.source_plant }}</span></td>
+                    <td><strong style="color: #0a2540;">{{ opp.dest_cpse }}</strong><br/><span style="font-size: 11px; color: #475569;">{{ opp.dest_plant }}</span></td>
+                    <td style="font-size: 11.5px; font-weight: 600;">{{ opp.source_stock }} / {{ opp.dest_requirement }}</td>
+                    <td style="font-size: 11.5px; font-weight: 700;">₹{{ opp.unit_price }}</td>
+                    <td style="font-size: 12px; font-weight: 800; color: #14532d;">₹{{ opp.unit_price|floatformat:0 }}</td>
+                    <td>
+                        <span class="status-pill status-verified" style="font-size: 10px;">VERIFIED</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

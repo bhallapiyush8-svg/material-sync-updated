@@ -1,0 +1,176 @@
+{% extends "materials/base.html" %}
+
+{% block title %}National Material Master Registry | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row">
+    <div>
+        <div class="page-kicker">
+            <span>◈</span>
+            <span>Canonical Standards Registry &bull; National Harmonization Master</span>
+        </div>
+        <h1 class="page-title">National Material Master Registry</h1>
+        <p class="page-subtitle">
+            Centralized canonical material records mapped to standardized ISO/DIN/ASTM engineering parameters, linking disparate CPSE inventory numbers into single sovereign identities.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div class="data-honesty-banner">
+            <span>🏛️</span>
+            <span>Total Catalogued: {{ total_master }} Harmonized Identities</span>
+        </div>
+    </div>
+</div>
+
+<!-- KPI SUMMARY STRIP -->
+<div class="kpi-strip">
+    <div class="kpi-card accent-blue">
+        <div class="kpi-label">
+            <span>Total National Master</span>
+            <span>◈</span>
+        </div>
+        <div class="kpi-value">{{ total_master }}</div>
+        <div class="kpi-footer-note">
+            <span>Canonical Standards</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-green">
+        <div class="kpi-label">
+            <span>Approved Master</span>
+            <span>✓</span>
+        </div>
+        <div class="kpi-value">{{ approved_total }}</div>
+        <div class="kpi-footer-note">
+            <span>Council Approved</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-amber">
+        <div class="kpi-label">
+            <span>Pending Review</span>
+            <span>⏳</span>
+        </div>
+        <div class="kpi-value">{{ pending_total }}</div>
+        <div class="kpi-footer-note">
+            <span>Awaiting Sign-off</span>
+        </div>
+    </div>
+
+    <div class="kpi-card accent-red">
+        <div class="kpi-label">
+            <span>Rejected Proposals</span>
+            <span>✕</span>
+        </div>
+        <div class="kpi-value">{{ rejected_total }}</div>
+        <div class="kpi-footer-note">
+            <span>Requires Refinement</span>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH & FILTER STRIP -->
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-body" style="padding: 14px 16px;">
+        <form method="GET" action="{% url 'national_master' %}" style="display: grid; grid-template-columns: 1fr 180px 180px auto; gap: 12px; align-items: center;">
+            <input type="text" name="search" class="form-control" placeholder="Search by national code, description, or keyword..." value="{{ search }}">
+            
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                {% for st in status_options %}
+                    <option value="{{ st }}" {% if st == selected_status %}selected{% endif %}>{{ st }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                {% for cat in category_options %}
+                    <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+
+            <div style="display: flex; gap: 6px;">
+                <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                <a href="{% url 'national_master' %}" class="btn btn-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- NATIONAL MASTER DATA TABLE -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <span>📋</span>
+            <span>Harmonized National Master Records ({{ visible_master }} Displayed)</span>
+        </div>
+        <span style="font-size: 11px; color: var(--slate-500);">Sovereign Material Catalog</span>
+    </div>
+    <div style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 200px;">National Material Code</th>
+                    <th>Standardized Engineering Description</th>
+                    <th style="width: 140px;">Category</th>
+                    <th style="width: 140px;">Mapped Sources</th>
+                    <th style="width: 110px;">Approval Status</th>
+                    <th style="width: 80px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in master_rows %}
+                <tr>
+                    <td>
+                        <a href="{% url 'national_material_detail' row.material.id %}" class="code-snippet" style="font-weight: 800; color: var(--navy-900);">
+                            {{ row.material.national_code }}
+                        </a>
+                    </td>
+                    <td>
+                        <div style="font-weight: 750; color: var(--navy-900); font-size: 12px;">
+                            {{ row.material.standardized_description }}
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size: 10.5px; font-weight: 750; color: var(--slate-600); text-transform: uppercase;">
+                            {{ row.material.category }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 3px; flex-wrap: wrap;">
+                            {% for code in row.cpse_codes %}
+                                <span style="padding: 1px 5px; background: var(--blue-soft); color: var(--blue-primary); border-radius: 3px; font-size: 9px; font-weight: 800; border: 1px solid #bfdbfe;">
+                                    {{ code }}
+                                </span>
+                            {% endfor %}
+                            <span style="font-size: 10px; color: var(--slate-500); margin-left: 2px;">({{ row.source_count }})</span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if row.material.status == 'APPROVED' %}
+                            <span class="status-pill status-approved">Approved</span>
+                        {% elif row.material.status == 'REJECTED' %}
+                            <span class="status-pill status-rejected">Rejected</span>
+                        {% else %}
+                            <span class="status-pill status-pending">In Review</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'national_material_detail' row.material.id %}" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 10.5px;">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 24px; color: var(--slate-500);">
+                        No national master records found matching filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

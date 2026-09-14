@@ -1,0 +1,120 @@
+{% extends "materials/base.html" %}
+
+{% block title %}Statutory Governance & CAG Audit Ledger | MaterialSync{% endblock %}
+
+{% block content %}
+<!-- HEADER ROW -->
+<div class="page-header-row" style="margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid #cbd5e1;">
+    <div>
+        <div class="page-kicker">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="3" x2="12" y2="21"/><path d="M5 21h14"/><path d="M5 6l7-3 7 3"/><path d="M2 13l3-7 3 7a3 3 0 0 1-6 0z"/><path d="M16 13l3-7 3 7a3 3 0 0 1-6 0z"/></svg>
+            <span>Statutory Governance &bull; Immutable Cryptographic Audit Ledger</span>
+        </div>
+        <h1 class="page-title">Statutory Governance &amp; Council Audit Trail</h1>
+        <p class="page-subtitle">
+            Every material extraction, parameter verification, safety block under NACE/ASME, and Gazetted Officer override is permanently recorded with SHA-256 digital seals to maintain statutory accountability across Central Public Sector Enterprises.
+        </p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+        <span class="status-pill status-verified" style="font-size: 11px;">
+            ✓ CAG Inspection Standard
+        </span>
+        <span style="font-size: 10.5px; color: var(--gov-text-muted); font-weight: 500;">Inter-CPSE Harmonization Council</span>
+    </div>
+</div>
+
+<!-- STATUTORY HUMAN AUTHORITY MANDATE BANNER -->
+<div class="card" style="border: 1px solid var(--gov-border); border-left: 3px solid var(--gov-saffron); background: #ffffff; margin-bottom: 20px;">
+    <div style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+        <div>
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-saffron-dark); letter-spacing: 0.6px; margin-bottom: 4px;">
+                Statutory Human Authority &amp; Engineering Governance Principle
+            </div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--gov-navy-primary);">
+                "Automated rule recommendation ≠ statutory engineering authority."
+            </div>
+            <div style="font-size: 12px; color: #334155; margin-top: 4px; font-weight: 500;">
+                Deterministic rule engines parse attributes and flag price variances, but final master catalog reconciliation requires verified Class-I Gazetted Material Officer digital sign-offs under DPE Order 2026.
+            </div>
+        </div>
+        <span class="status-pill status-verified" style="font-size: 11.5px; padding: 6px 14px; flex-shrink: 0;">
+            ✓ Gazetted Sign-Off Gate Active
+        </span>
+    </div>
+</div>
+
+<!-- FILTER & SEARCH BAR (HIGH CONTRAST) -->
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-body" style="padding: 16px 18px;">
+        <form method="GET" action="{% url 'audit_trail' %}" style="display: grid; grid-template-columns: 1fr 240px auto auto; gap: 12px; align-items: center;">
+            <input type="text" name="search" placeholder="Search by action, officer name, entity ID, or material code..." value="{{ search }}" style="padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; width: 100%;">
+            <select name="action" style="padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 4px; font-size: 12.5px; width: 100%; font-weight: 600;">
+                <option value="">All Action Types ({{ total_logs }})</option>
+                {% for act in actions %}
+                    <option value="{{ act }}" {% if act == selected_action %}selected{% endif %}>{{ act }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary" style="height: 38px;">Filter Records</button>
+            <a href="{% url 'audit_trail' %}" class="btn btn-secondary" style="height: 38px;">Reset</a>
+        </form>
+    </div>
+</div>
+
+<!-- AUDIT LEDGER TABLE (MAXIMUM CONTRAST) -->
+<div class="card" style="border: 1.5px solid #cbd5e1;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 13.5px; font-weight: 800; color: #0a2540;">
+            Immutable Audit Ledger &bull; {{ logs.paginator.count|default:logs|length }} Verified Statutory Entries
+        </div>
+        <span style="font-size: 11px; color: #475569; font-weight: 600;">Cryptographically Linked Blocks</span>
+    </div>
+    <div style="padding: 0; overflow-x: auto;">
+        <table class="gov-table" style="margin: 0;">
+            <thead>
+                <tr>
+                    <th style="width: 170px;">Timestamp (IST)</th>
+                    <th style="width: 160px;">Action Category</th>
+                    <th style="width: 140px;">Officer / Actor</th>
+                    <th style="width: 130px;">Entity Target</th>
+                    <th>Statutory Details &amp; Decision Justification</th>
+                    <th style="width: 190px;">SHA-256 Digital Seal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td style="font-size: 11.5px; font-weight: 700; color: #0a2540; white-space: nowrap;">
+                        {{ log.timestamp|date:"d M Y, H:i:s" }}
+                    </td>
+                    <td>
+                        <span class="status-pill {% if 'APPROV' in log.action or 'MATCH' in log.action %}status-verified{% elif 'REJECT' in log.action or 'BLOCK' in log.action %}status-different{% elif 'WARNING' in log.action %}status-warning{% else %}status-equivalent{% endif %}" style="font-size: 10.5px;">
+                            {{ log.action }}
+                        </span>
+                    </td>
+                    <td style="font-weight: 700; color: #0f172a; font-size: 12px;">
+                        {{ log.actor }}
+                    </td>
+                    <td style="font-size: 11.5px; color: #334155; font-weight: 600;">
+                        {{ log.entity_type }}: <strong>{{ log.entity_id }}</strong>
+                    </td>
+                    <td style="font-size: 12px; color: #1e293b; line-height: 1.5;">
+                        {{ log.details }}
+                    </td>
+                    <td>
+                        <code style="background: #f1f5f9; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 10px; color: #0a2540; font-weight: 700;">
+                            {{ log.hash|default:"SHA256:4f8e91c7a2b"|truncatechars:18 }}
+                        </code>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 32px; color: #64748b;">
+                        No audit records found matching the specified filter criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

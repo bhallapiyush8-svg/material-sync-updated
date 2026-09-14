@@ -1,0 +1,450 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaterialSync | Unified Material Intelligence Across CPSEs</title>
+    
+    <link rel="stylesheet" href="{% static 'materials/legacy.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/design-tokens.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/enterprise.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/reference-alignment.css' %}">
+    <link rel="stylesheet" href="{% static 'materials/targeted-refinement.css' %}">
+
+    <style>
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        /* TYPOGRAPHY EQUALIZATION WITH SUB-PAGES */
+        .public-shell {
+            font-size: 14.5px !important;
+            color: #1e293b !important;
+        }
+
+        .gov-top-accessibility-bar {
+            font-size: 11.5px !important;
+            padding: 6px 32px !important;
+        }
+
+        .institution-identity strong {
+            font-size: 15px !important;
+        }
+
+        .institution-identity .institution-hindi {
+            font-size: 13px !important;
+        }
+
+        .institution-identity small {
+            font-size: 11.5px !important;
+        }
+
+        .public-nav-container {
+            overflow: visible !important;
+            max-width: 100vw !important;
+        }
+
+        .public-nav {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .public-nav-links a {
+            font-size: 13.5px !important;
+            font-weight: 600 !important;
+        }
+
+        .public-nav .nav-workspace {
+            font-size: 13px !important;
+            font-weight: 750 !important;
+        }
+
+        .nav-global-search {
+            max-width: 220px !important;
+            min-width: 140px !important;
+            flex: 0 1 200px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .hero-editorial h1 {
+            font-size: clamp(2.3rem, 3.4vw, 3.2rem) !important;
+            line-height: 1.18 !important;
+            font-weight: 800 !important;
+            font-family: 'Noto Serif', Georgia, serif !important;
+            color: #0a2540 !important;
+        }
+
+        .hero-support {
+            font-size: 16.5px !important;
+            line-height: 1.65 !important;
+            color: #334155 !important;
+            margin-top: 14px !important;
+        }
+
+        .public-hero .btn {
+            font-size: 13.5px !important;
+            padding: 10px 22px !important;
+            font-weight: 750 !important;
+        }
+
+        .vision-quote blockquote {
+            font-size: 16.5px !important;
+            line-height: 1.55 !important;
+            font-family: 'Noto Serif', Georgia, serif !important;
+            color: #0a2540 !important;
+        }
+
+        .vision-label {
+            font-size: 13.5px !important;
+            font-weight: 750 !important;
+            color: #0a2540 !important;
+        }
+
+        .vision-tagline {
+            font-size: 12.5px !important;
+            line-height: 1.5 !important;
+            color: #475569 !important;
+        }
+
+        .vision-context {
+            font-size: 11px !important;
+            color: #64748b !important;
+        }
+
+        .homepage-statistics strong {
+            font-size: 28px !important;
+            font-weight: 800 !important;
+            color: #0a2540 !important;
+        }
+
+        .homepage-statistics span {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            margin-top: 4px !important;
+        }
+
+        .homepage-statistics small {
+            font-size: 11.5px !important;
+            color: #64748b !important;
+        }
+
+        .cpse-band h2 {
+            font-size: 14px !important;
+            font-weight: 750 !important;
+            color: #0a2540 !important;
+        }
+
+        .cpse-band p {
+            font-size: 11.5px !important;
+            color: #475569 !important;
+        }
+
+        .capability-section h2, .process-section h2, .information-section h2 {
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            font-family: 'Noto Serif', Georgia, serif !important;
+            color: #0a2540 !important;
+        }
+
+        .eyebrow {
+            font-size: 11.5px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.8px !important;
+            color: #ea580c !important;
+        }
+
+        .capability-list h3 {
+            font-size: 17px !important;
+            font-weight: 750 !important;
+            color: #0a2540 !important;
+            margin-bottom: 8px !important;
+        }
+
+        .capability-list p, .information-section > p {
+            font-size: 14px !important;
+            line-height: 1.65 !important;
+            color: #334155 !important;
+        }
+
+        .section-number {
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            color: #ea580c !important;
+        }
+
+        .process-rail h3 {
+            font-size: 14px !important;
+            font-weight: 750 !important;
+            color: #0a2540 !important;
+        }
+
+        .process-rail p {
+            font-size: 12px !important;
+            line-height: 1.4 !important;
+            color: #475569 !important;
+        }
+
+        .resource-links a, .information-section .text-link {
+            font-size: 13.5px !important;
+            font-weight: 600 !important;
+        }
+
+        .gov-footer {
+            font-size: 12.5px !important;
+        }
+
+        .gov-footer strong {
+            font-size: 13.5px !important;
+            font-weight: 750 !important;
+        }
+
+        .gov-footer a {
+            font-size: 12.5px !important;
+        }
+
+        .footer-bottom {
+            font-size: 11.5px !important;
+        }
+    </style>
+</head>
+<body class="public-shell ">
+
+<div class="gov-top-accessibility-bar">
+  <div><span lang="hi">भारत सरकार</span> <span class="utility-divider">|</span> Government of India <span class="utility-divider">|</span> <span lang="hi">स्मार्ट इंडिया हैकथॉन</span> (SIH 2026) <span class="prototype-qualifier">· Prototype</span></div>
+  <div class="accessibility-controls">
+    <a href="#main-content">Skip to Main Content</a>
+    <span aria-hidden="true">|</span>
+    <button type="button" data-font-scale="-1" aria-label="Decrease text size">A-</button>
+    <button type="button" data-font-scale="0" aria-label="Reset text size">A</button>
+    <button type="button" data-font-scale="1" aria-label="Increase text size">A+</button>
+    <span aria-hidden="true">|</span>
+    <a href="{% url 'multilingual' %}" style="color:#ffffff; text-decoration:none; font-weight:700;"><span lang="hi">हिन्दी</span> / English</a>
+    <span aria-hidden="true">|</span>
+    {% if request.user.is_authenticated %}
+      <span style="background: #0a2540; color: #ffffff; padding: 2px 8px; border-radius: 3px; font-weight: 750; font-size: 11px;">✓ Er. {{ request.session.engineer_employee_id|default:request.user.username }}</span>
+      <a href="{% url 'engineer_logout' %}" style="color:#ffffff; text-decoration:underline; margin-left:4px;">Sign Out</a>
+    {% else %}
+      <a href="{% url 'engineer_login' %}" style="color:#ffffff; font-weight:800; background:rgba(10,37,64,0.4); padding:2px 8px; border-radius:3px; text-decoration:none;">🔒 Officer Login</a>
+    {% endif %}
+  </div>
+</div>
+
+<header class="gov-brand-header ">
+  <div class="institution-identity">
+    <span class="institution-emblem" role="img" aria-label="National emblem from the supplied prototype design"></span>
+    <div><p class="institution-hindi" lang="hi">पेट्रोलियम एवं प्राकृतिक गैस मंत्रालय</p><strong>Ministry of Petroleum and Natural Gas</strong><small>National CPSE Material Standardization &amp; Harmonization Grid (SIH-2026)</small><span class="institution-context">Project context · Not an official ministry portal</span></div>
+  </div>
+  <div class="header-right"><a class="brand-wordmark" href="{% url 'home' %}"><span>Material</span><span class="brand-sync">Sync</span><span class="version-label">v2.4 PRO</span><small lang="hi">राष्ट्रीय सामग्री मानकीकरण एवं सामंजस्य ग्रिड</small><small>A Gov-Tech Prototype | SIH26099</small></a>
+    <span class="digital-india-mark" role="img" aria-label="Digital India in the supplied prototype design"></span>
+  </div>
+</header>
+
+<div class="public-nav-container">
+  <button type="button" class="mobile-nav-toggle" data-menu-toggle="public-navigation" aria-expanded="false" aria-controls="public-navigation">Menu</button>
+  <nav class="public-nav" id="public-navigation" aria-label="Public navigation">
+    <div class="public-nav-links">
+      <a href="{% url 'home' %}" class="active">Home</a>
+      <a href="{% url 'about' %}">About</a>
+      <a href="#platform">Material Harmonization</a>
+      <a href="#inventory-intelligence">Inventory Intelligence</a>
+      <a href="#procurement-overview">Procurement</a>
+      <a href="#public-governance">Governance</a>
+      <a href="#resources">Resources</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-workspace" href="{% url 'dashboard' %}">Workspace &rarr;</a>
+    </div>
+    <form class="nav-global-search" action="{% url 'search' %}" method="get" role="search" data-global-search data-suggest-url="{% url 'search' %}">
+      <label class="sr-only" for="nav-search">Search materials, CPSEs and available records</label>
+      <button type="submit" aria-label="Execute search">
+        <svg class="outline-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>
+        </svg>
+      </button>
+      <input id="nav-search" name="q" type="search" placeholder="Search catalog, item code, CPSE..." maxlength="200" autocomplete="off" aria-controls="nav-search-suggestions" aria-expanded="false">
+      <div id="nav-search-suggestions" class="nav-search-suggestions" hidden>
+        <div data-search-results></div>
+        <p data-search-status role="status"></p>
+      </div>
+    </form>
+  </nav>
+</div>
+
+<div class="app-layout-body">
+    <div class="app-main-viewport">
+        <main class="app-page-content public-page" id="main-content">
+            
+<section class="public-hero">
+  <div class="public-container hero-composition">
+    <div class="hero-editorial">
+      <h1>Unified Material Intelligence<br>Across CPSEs</h1>
+      <p class="hero-support">Standardizing fragmented engineering material identities to improve visibility, reuse, governance and procurement decisions across India's public sector enterprises.</p>
+      <div class="section-actions">
+        <a class="btn btn-primary" href="{% url 'dashboard' %}">Login to Workspace &rarr;</a>
+        <a class="btn btn-secondary" href="#platform">Explore the Platform</a>
+      </div>
+    </div>
+    <div class="hero-vision">
+      <img class="vision-tricolour" src="{% static 'materials/vision-tricolour.svg' %}" alt="" aria-hidden="true">
+      <div class="vision-quote">
+        <span class="quotation-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote>When public enterprises speak the same material language, data becomes intelligence, inventory becomes visible, and procurement becomes smarter.</blockquote>
+        <p class="vision-label">MaterialSync Vision</p>
+        <p class="vision-tagline">One Material Identity. Better Decisions. Across CPSEs.</p>
+      </div>
+      <figure class="vision-portrait" role="img" aria-label="National vision composition with Prime Minister Narendra Modi, tricolour and industrial skyline from the approved prototype reference">
+        <img src="{% static 'materials/prime-minister.png' %}" alt="Hon'ble Prime Minister Narendra Modi" width="337" height="398">
+        <figcaption><strong>Stronger Public Enterprises<br>for a Developed India</strong></figcaption>
+      </figure>
+      <p class="vision-context">Prototype Vision · Smart India Hackathon 2026 | SIH26099</p>
+    </div>
+  </div>
+  <img class="hero-silhouette" src="{% static 'materials/industrial-silhouette.svg' %}" alt="" aria-hidden="true">
+</section>
+
+<section class="homepage-statistics public-container" aria-label="Prototype statistics">
+  <div>
+    <strong>{{ participating_psus_count|default:"6" }}+</strong>
+    <span>Participating CPSEs</span>
+    <small>Maharatna &amp; Navratna</small>
+  </div>
+  <div>
+    <strong>{{ matches_count|default:"1,248" }}+</strong>
+    <span>Cross-CPSE Items Evaluated</span>
+    <small>Catalog Harmonization</small>
+  </div>
+  <div>
+    <strong>&#8377;{{ estimated_cost_avoidance_cr|default:"48.50" }} Cr</strong>
+    <span>Estimated Cost Avoidance</span>
+    <small>Avoided Redundant Capex</small>
+  </div>
+  <div>
+    <strong>{{ carbon_avoided_tons|default:"184.2" }} tCO2e</strong>
+    <span>Scope 3 Emissions Avoided</span>
+    <small>Circular Economy</small>
+  </div>
+</section>
+
+<section class="cpse-band public-container">
+  <h2>Participating<br>CPSEs <span>(Demo)</span></h2>
+  <div class="cpse-wordmarks">
+    <span class="cpse-mark cpse-ongc" role="img" aria-label="ONGC"><span class="sr-only">ONGC</span></span>
+    <span class="cpse-mark cpse-iocl" role="img" aria-label="IndianOil"><span class="sr-only">IndianOil</span></span>
+    <span class="cpse-mark cpse-ntpc" role="img" aria-label="NTPC"><span class="sr-only">NTPC</span></span>
+    <span class="cpse-mark cpse-sail" role="img" aria-label="SAIL"><span class="sr-only">SAIL</span></span>
+    <span class="cpse-mark cpse-bhel" role="img" aria-label="BHEL"><span class="sr-only">BHEL</span></span>
+    <span class="cpse-mark cpse-bpcl" role="img" aria-label="BPCL"><span class="sr-only">BPCL</span></span>
+    <small>...and more</small>
+  </div>
+  <p>Representative organizations shown for prototype demonstration. No live integration.</p>
+</section>
+
+<section id="platform" class="public-container capability-section">
+  <p class="eyebrow">Platform overview</p>
+  <h2>A common material identity. A clearer engineering record.</h2>
+  <div class="capability-list">
+    <article id="harmonization">
+      <span class="section-number">01</span>
+      <div>
+        <h3>Material Harmonization</h3>
+        <p>Normalize fragmented descriptions, find duplicate identities and compare critical engineering attributes.</p>
+      </div>
+    </article>
+    <article id="inventory-intelligence">
+      <span class="section-number">02</span>
+      <div>
+        <h3>Inventory Intelligence</h3>
+        <p>Explore representative cross-CPSE stock and identify governed reallocation opportunities.</p>
+      </div>
+    </article>
+    <article id="public-governance">
+      <span class="section-number">03</span>
+      <div>
+        <h3>Human Authority &amp; Governance</h3>
+        <p>Engineers record justified decisions; auditors inspect evidence and approval history.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="procurement-overview" class="public-container information-section">
+  <h2>Procurement decision support</h2>
+  <p>Compare historical reference procurement prices, estimated transfer costs and lead times. Estimated Potential Cost Avoidance is a prototype calculation, not a guaranteed saving.</p>
+  <a class="text-link" href="{% url 'dashboard' %}">Enter the workspace to compare options &rarr;</a>
+</section>
+
+<section class="process-section public-container">
+  <h2>From source material to accountable decision</h2>
+  <ol class="process-rail" aria-label="Material harmonization process">
+    <li>
+      <span>1</span>
+      <h3>Ingest</h3>
+      <p>Legacy material data</p>
+    </li>
+    <li>
+      <span>2</span>
+      <h3>Parse</h3>
+      <p>Engineering attributes</p>
+    </li>
+    <li>
+      <span>3</span>
+      <h3>Match</h3>
+      <p>Material similarity</p>
+    </li>
+    <li>
+      <span>4</span>
+      <h3>Validate</h3>
+      <p>Engineering check</p>
+    </li>
+    <li>
+      <span>5</span>
+      <h3>Decide</h3>
+      <p>Human review</p>
+    </li>
+    <li>
+      <span>6</span>
+      <h3>Optimize</h3>
+      <p>Savings estimates</p>
+    </li>
+  </ol>
+</section>
+
+<section id="resources" class="public-container information-section">
+  <h2>Resources</h2>
+  <div class="resource-links">
+    <a href="{% url 'comparator' %}">Explore Material Master Comparator &rarr;</a>
+    <a href="{% url 'dashboard' %}">Demo access and CPSE workspace &rarr;</a>
+  </div>
+  <p class="image-credit">National and industrial visuals are reused from the supplied approved design reference. Their inclusion does not imply official endorsement. MaterialSync Vision is project-generated.</p>
+</section>
+
+<section id="contact" class="public-container information-section">
+  <h2>MaterialSync Project Support</h2>
+  <p>For prototype demonstrations, technical queries and project coordination related to MaterialSync.</p>
+  <p class="prototype-note">Prototype developed for Smart India Hackathon. Not an official Government of India portal.</p>
+</section>
+
+        </main>
+    </div>
+</div>
+
+<footer class="gov-footer  homepage-footer">
+  <div class="footer-columns">
+    <div><strong>MaterialSync</strong><p>National CPSE Material Harmonization Grid</p></div>
+    <div><strong>Platform</strong><a href="{% url 'comparator' %}">Material Harmonization</a><a href="{% url 'savings' %}">Inventory Intelligence</a></div>
+    <div><strong>Project</strong><a href="#platform">About SIH26099</a><a href="#resources">Resources</a></div>
+    <div><strong>MaterialSync Project Support</strong><a href="#contact">Technical queries / demo support</a><p>Smart India Hackathon 2026</p></div>
+  </div>
+  <div class="footer-bottom">
+    <span>MaterialSync · SIH 2026 · SIH26099 · Gov-Tech Prototype</span>
+    <span>SIH 2026 Prototype — not an official Government of India production portal.</span>
+  </div>
+</footer>
+
+<script src="{% static 'materials/shell.js' %}" defer></script>
+<script src="{% static 'materials/global-search.js' %}" defer></script>
+    
+</body>
+</html>

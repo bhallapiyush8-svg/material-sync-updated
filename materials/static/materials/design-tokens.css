@@ -1,0 +1,18 @@
+:root {
+  --saffron-primary:#E66B00; --saffron-dark:#C95A00; --saffron-light:#F39A42;
+  --india-green:#138808; --navy-primary:#0B2A55; --navy-dark:#071D3A; --navy-soft:#173B67;
+  --text-primary:#172B4D; --text-secondary:#52677D;
+  --ivory-background:#F8F6F0; --warm-background:#F3EFE6; --cream:#FFF9EE; --white:#FFFFFF;
+  --border:#D8DEE6; --border-strong:#bec9d6; --success:#16833B; --warning:#D97706; --danger:#B42318;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px; --space-12:48px; --space-16:64px;
+  --radius-sm:4px; --radius-md:5px; --radius-lg:6px; --radius-xl:8px; --sidebar-width:250px;
+  --gov-navy-950:var(--navy-dark); --gov-navy-900:var(--navy-primary); --gov-navy-800:var(--navy-soft); --gov-navy-700:var(--navy-soft); --gov-navy-600:var(--navy-soft);
+  --gov-slate-900:var(--text-primary); --gov-slate-800:var(--text-primary); --gov-slate-700:var(--text-secondary); --gov-slate-600:var(--text-secondary); --gov-slate-500:#65758a; --gov-slate-400:#9ba9b9; --gov-slate-300:var(--border); --gov-slate-200:#e7ebf0; --gov-slate-100:#f3f5f7; --gov-slate-50:#fafbf9;
+  --gov-tricolor-saffron:var(--saffron-primary); --saffron:var(--saffron-primary);
+  --surface:var(--white); --background:var(--ivory-background); --blue-soft:#edf2f8; --blue-dark:var(--navy-dark);
+  --status-green:var(--success); --status-green-bg:#eaf5ec; --status-green-border:#c9dfce;
+  --status-amber:var(--warning); --status-amber-bg:#fff2df; --status-amber-border:#ecd4b1;
+  --status-red:var(--danger); --status-red-bg:#fceeea; --status-red-border:#edcec8;
+  --status-blue:var(--navy-soft); --status-blue-bg:#edf2f8; --status-blue-border:#d5dfeb;
+  --shadow-xs:none; --shadow-sm:none; --shadow-md:none; --shadow-lg:none;
+}
