@@ -44,6 +44,12 @@ urlpatterns = [
         name="material_transfer",
     ),
 
+    path(
+        "transfer/voucher/<str:opportunity_id>/",
+        views.material_transfer_voucher_view,
+        name="material_transfer_voucher",
+    ),
+
     # =====================================================
     # 1. CONTROL CENTER / OPERATIONAL WORKSPACE
     # =====================================================

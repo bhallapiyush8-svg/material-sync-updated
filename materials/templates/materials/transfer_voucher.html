@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Voucher {{ voucher_no }} | Form GFR-19A</title>
+    <style>
+        :root {
+            --gov-navy: #0a2540;
+            --gov-slate: #334155;
+            --gov-border: #cbd5e1;
+            --gov-saffron: #d97706;
+            --gov-green: #15803d;
+            --gov-bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 24px 16px;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        /* FLOATING PRINT ACTIONS TOOLBAR */
+        .print-toolbar {
+            max-width: 960px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--gov-navy);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-print {
+            background: #ea580c;
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 750;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn-print:hover {
+            background: #c2410c;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* FORM DOCUMENT SHEET */
+        .voucher-sheet {
+            max-width: 960px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px 48px;
+            border: 2px solid #94a3b8;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* WATERMARK */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 70px;
+            font-weight: 900;
+            color: rgba(15, 23, 42, 0.035);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        /* HEADER */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr 190px;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 2.5px solid var(--gov-navy);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+
+        .emblem-placeholder {
+            width: 72px;
+            height: 72px;
+            border: 2px solid var(--gov-navy);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--gov-navy);
+            background: #f8fafc;
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--gov-navy);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .header-title h2 {
+            font-size: 12px;
+            font-weight: 750;
+            color: #b45309;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .header-title p {
+            font-size: 10px;
+            color: var(--gov-slate);
+            font-weight: 500;
+        }
+
+        .voucher-meta-box {
+            border: 1.5px solid var(--gov-navy);
+            padding: 8px 10px;
+            border-radius: 4px;
+            background: #f8fafc;
+            font-size: 10.5px;
+        }
+
+        .voucher-meta-box div {
+            margin-bottom: 3px;
+        }
+
+        .voucher-meta-box strong {
+            color: var(--gov-navy);
+        }
+
+        /* SUB-BANNER */
+        .sub-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0a2540;
+            color: #ffffff;
+            padding: 6px 12px;
+            font-size: 10.5px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+        }
+
+        /* SECTION II: CONSIGNOR & CONSIGNEE */
+        .parties-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .party-card {
+            border: 1.5px solid var(--gov-border);
+            border-radius: 4px;
+            padding: 12px 14px;
+            background: #ffffff;
+        }
+
+        .party-card-header {
+            font-size: 11px;
+            font-weight: 850;
+            text-transform: uppercase;
+            color: var(--gov-navy);
+            border-bottom: 1px solid var(--gov-border);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .party-card-body p {
+            margin-bottom: 4px;
+            font-size: 11px;
+            color: #1e293b;
+        }
+
+        /* LINE ITEM TABLE */
+        .line-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 11px;
+        }
+
+        .line-table th {
+            background: #f1f5f9;
+            color: var(--gov-navy);
+            font-weight: 800;
+            border: 1px solid var(--gov-border);
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10.5px;
+            text-transform: uppercase;
+        }
+
+        .line-table td {
+            border: 1px solid var(--gov-border);
+            padding: 10px;
+            color: #1e293b;
+            vertical-align: top;
+        }
+
+        /* FINANCIAL SUMMARY ROW */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1.5px solid var(--gov-border);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .fin-item span {
+            display: block;
+            font-size: 10px;
+            font-weight: 750;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .fin-item strong {
+            font-size: 15px;
+            font-weight: 850;
+            color: var(--gov-navy);
+        }
+
+        /* STATUTORY DECLARATION CLAUSES */
+        .statutory-box {
+            border: 1.5px solid #fed7aa;
+            background: #fffaf5;
+            border-left: 4px solid var(--gov-saffron);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            font-size: 10.5px;
+            color: #7c2d12;
+            line-height: 1.5;
+        }
+
+        .statutory-box ol {
+            margin-left: 18px;
+            margin-top: 6px;
+        }
+
+        .statutory-box li {
+            margin-bottom: 3px;
+        }
+
+        /* SIGNATURE BLOCKS */
+        .signatures-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1.5px dashed var(--gov-border);
+        }
+
+        .sig-block {
+            border: 1px solid var(--gov-border);
+            border-radius: 4px;
+            padding: 12px 10px;
+            text-align: center;
+            background: #fafbfc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 110px;
+        }
+
+        .sig-space {
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: cursive, sans-serif;
+            color: #1e3a8a;
+            font-size: 13px;
+            border-bottom: 1px solid #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .sig-role {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: var(--gov-navy);
+            text-transform: uppercase;
+        }
+
+        .sig-name {
+            font-size: 9px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        .voucher-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gov-border);
+            font-size: 9.5px;
+            color: #64748b;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .print-toolbar {
+                display: none !important;
+            }
+
+            .voucher-sheet {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 16px 20px !important;
+                max-width: 100% !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ACTION TOOLBAR (HIDDEN ON PRINT) -->
+    <div class="print-toolbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="{% url 'material_transfer' %}" class="btn-back">&larr; Back to Transfer Gateway</a>
+            <span style="font-size: 12.5px; font-weight: 600;">
+                Inter-CPSE Statutory Transfer Indent: <strong>{{ voucher_no }}</strong>
+            </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 11px; opacity: 0.85;">DPE Circular 2026 Aligned</span>
+            <button onclick="window.print()" class="btn-print">
+                <span>🖨️ Print Voucher / Save as PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- DOCUMENT SHEET -->
+    <div class="voucher-sheet">
+        <div class="watermark">DPE OFFICIAL INTER-CPSE TRANSFER</div>
+
+        <!-- HEADER -->
+        <div class="header-grid">
+            <div class="emblem-placeholder">
+                <span style="font-size: 22px;">🏛️</span>
+                <span>सत्यमेव जयते</span>
+            </div>
+            <div class="header-title">
+                <h1>Government of India &bull; Ministry of Finance</h1>
+                <h2>Department of Public Enterprises (DPE)</h2>
+                <p>Inter-CPSE Capital Assets Rationalization &amp; Surplus Material Reallocation Council</p>
+                <div style="font-size: 9.5px; font-weight: 700; color: #475569; margin-top: 4px;">
+                    FORM GFR 19-A &bull; STATUTORY INTER-ENTERPRISE STORE ISSUE &amp; TRANSFER VOUCHER
+                </div>
+            </div>
+            <div class="voucher-meta-box">
+                <div><strong>Voucher No:</strong> {{ voucher_no }}</div>
+                <div><strong>Date of Issue:</strong> {{ today_str }}</div>
+                <div><strong>E-Office File:</strong> {{ e_office_ref }}</div>
+                <div><strong>E-Way Bill:</strong> {{ eway_bill_no }}</div>
+            </div>
+        </div>
+
+        <!-- SUB-BANNER -->
+        <div class="sub-banner">
+            <span>Part I: Inter-Enterprise Store Issue Authorization (Quadruplicate Original)</span>
+            <span>Security Classification: Official / Non-Commercial Reallocation</span>
+        </div>
+
+        <!-- PARTIES: DONOR & RECIPIENT -->
+        <div class="parties-grid">
+            <!-- CONSIGNOR -->
+            <div class="party-card">
+                <div class="party-card-header">
+                    <span>1. Consignor (Donor CPSE)</span>
+                    <span style="color: var(--gov-green);">Surplus Allocator</span>
+                </div>
+                <div class="party-card-body">
+                    <p><strong style="font-size: 13px; color: var(--gov-navy);">{{ opp.source_cpse }} Limited</strong></p>
+                    <p><strong>Dispatch Plant / Store:</strong> {{ opp.source_plant }}</p>
+                    <p><strong>GSTIN / Tax Jurisdiction:</strong> {{ source_gstin }}</p>
+                    <p><strong>Custodian Officer:</strong> Chief General Manager (Materials &amp; Logistics)</p>
+                    <p><strong>Available Plant Reserve:</strong> {{ opp.source_stock }} units</p>
+                </div>
+            </div>
+
+            <!-- CONSIGNEE -->
+            <div class="party-card">
+                <div class="party-card-header">
+                    <span>2. Consignee (Recipient CPSE)</span>
+                    <span style="color: #b45309;">Indenting Facility</span>
+                </div>
+                <div class="party-card-body">
+                    <p><strong style="font-size: 13px; color: var(--gov-navy);">{{ opp.dest_cpse }} Limited</strong></p>
+                    <p><strong>Receiving Facility:</strong> {{ opp.dest_plant }}</p>
+                    <p><strong>GSTIN / Tax Jurisdiction:</strong> {{ dest_gstin }}</p>
+                    <p><strong>Requisitioning Officer:</strong> Head of Materials / Plant General Manager</p>
+                    <p><strong>Active Project Indent:</strong> {{ opp.dest_requirement }} units</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION III: MATERIAL PARTICULARS -->
+        <table class="line-table">
+            <thead>
+                <tr>
+                    <th style="width: 35px;">Sl.</th>
+                    <th style="width: 140px;">National Master Code</th>
+                    <th>Standardized Material Specification &amp; Standard</th>
+                    <th style="width: 80px;">HSN Code</th>
+                    <th style="width: 75px; text-align: right;">Quantity</th>
+                    <th style="width: 90px; text-align: right;">Unit Book Value</th>
+                    <th style="width: 105px; text-align: right;">Gross Avoided Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center; font-weight: 750;">01</td>
+                    <td>
+                        <strong style="color: var(--gov-navy); font-size: 11px;">{{ opp.material_code }}</strong><br/>
+                        <span style="font-size: 9px; color: #64748b;">Legacy: {{ opp.id }}</span>
+                    </td>
+                    <td>
+                        <strong style="color: #0f172a; font-size: 11.5px;">{{ opp.description }}</strong><br/>
+                        <span style="font-size: 10px; color: #475569;">
+                            Governing Standard: <strong>ISO 4017 / DIN 933 / IS 1364 (Metric Spec)</strong>
+                        </span><br/>
+                        <span style="font-size: 9.5px; color: var(--gov-green); font-weight: 700;">
+                            ✓ Technical Equivalence Certified (100% Geometry &amp; Metallurgy Agreement)
+                        </span>
+                    </td>
+                    <td style="font-family: monospace; font-weight: 700;">{{ hsn_code }}</td>
+                    <td style="text-align: right; font-weight: 850; font-size: 12px; color: var(--gov-navy);">
+                        {{ qty }}
+                    </td>
+                    <td style="text-align: right; font-weight: 600;">
+                        ₹{{ opp.unit_price|floatformat:2 }}
+                    </td>
+                    <td style="text-align: right; font-weight: 800; color: var(--gov-green);">
+                        ₹{{ calc.avoided_purchase|floatformat:2 }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- LOGISTICS & FINANCIAL VALUATION BREAKDOWN -->
+        <div class="financial-summary">
+            <div class="fin-item">
+                <span>Authorized Freight Carrier &amp; Route</span>
+                <strong style="font-size: 12.5px;">{{ carrier }}</strong>
+                <div style="font-size: 10px; color: #475569; margin-top: 2px;">
+                    Distance: {{ opp.distance_km }} km &bull; Total Consignment Weight: {{ calc.total_weight_kg }} kg
+                </div>
+            </div>
+            <div class="fin-item">
+                <span>Avoided Purchase Value</span>
+                <strong>₹{{ calc.avoided_purchase|floatformat:0 }}</strong>
+            </div>
+            <div class="fin-item">
+                <span>Estimated Freight Cost</span>
+                <strong style="color: #c2410c;">₹{{ calc.transport_cost|floatformat:0 }}</strong>
+            </div>
+            <div class="fin-item">
+                <span>Net Exchequer Realization</span>
+                <strong style="color: var(--gov-green); font-size: 16px;">₹{{ calc.net_savings|floatformat:0 }}</strong>
+            </div>
+        </div>
+
+        <!-- STATUTORY & GFR COMPLIANCE DECLARATIONS -->
+        <div class="statutory-box">
+            <strong>STATUTORY DECLARATIONS UNDER GENERAL FINANCIAL RULES (GFR 2017) &amp; DPE CIRCULAR 2026:</strong>
+            <ol>
+                <li><strong>Rule 149 &amp; 153 Compliance:</strong> This inter-enterprise transfer is sanctioned in lieu of floating a fresh competitive tender on GeM, under the Public Procurement (Preference to Make in India / Inter-Enterprise Rationalization) Orders.</li>
+                <li><strong>No Commercial Markup:</strong> Materials are transferred on exact historical book-value / inventory amortization terms without profit loading, as mandated by the Ministry of Finance.</li>
+                <li><strong>Mill Test Certificate &amp; Warranty:</strong> The Consignor certifies that original manufacturer test certificates (MTC), NDT reports, and batch shelf-life documents remain fully valid and are handed over in original.</li>
+                <li><strong>Cryptographic Traceability:</strong> This document carries an immutable SHA-256 digital signature anchored on the Central National Materials Master Grid.</li>
+            </ol>
+        </div>
+
+        <!-- QUADRUPLICATE SIGNATURE & SEAL BLOCKS -->
+        <div class="signatures-grid">
+            <div class="sig-block">
+                <div class="sig-role">1. Issuing Stores Custodian</div>
+                <div class="sig-space">S. K. Sharma</div>
+                <div class="sig-name">
+                    Dy. General Manager (Materials)<br/>
+                    {{ opp.source_cpse }} Limited &bull; Plant Store
+                </div>
+            </div>
+
+            <div class="sig-block">
+                <div class="sig-role">2. Logistics Carrier Seal</div>
+                <div class="sig-space">CONCOR / Rail Freight</div>
+                <div class="sig-name">
+                    Commercial Freight Agent<br/>
+                    Rail Freight Indent #RR-8841-A
+                </div>
+            </div>
+
+            <div class="sig-block">
+                <div class="sig-role">3. Receiving Material Officer</div>
+                <div class="sig-space">P. Venkatraman</div>
+                <div class="sig-name">
+                    Chief Materials Manager<br/>
+                    {{ opp.dest_cpse }} Limited &bull; Central Receiving
+                </div>
+            </div>
+
+            <div class="sig-block">
+                <div class="sig-role">4. DPE Council Counter-Sign</div>
+                <div class="sig-space">R. K. Verma</div>
+                <div class="sig-name">
+                    Member Secretary<br/>
+                    Inter-CPSE Harmonization Council
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER WITH AUDIT HASH -->
+        <div class="voucher-footer">
+            <div>
+                <strong>Immutable Audit Hash:</strong> <code style="font-family: monospace; color: #0a2540;">{{ audit_hash }}</code>
+            </div>
+            <div>
+                National MaterialSync v2 &bull; Smart India Hackathon Gov-Tech Prototype
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

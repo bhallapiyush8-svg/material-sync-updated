@@ -4,11 +4,14 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from django.db.models import Q
+
 from materials.models import (
     AuditLog,
     Material,
     MaterialGroup,
     MaterialGroupMember,
+    MaterialMatch,
     NationalMaterial,
     NationalMaterialMapping,
 )
@@ -270,6 +273,18 @@ class Command(BaseCommand):
                             )
                             continue
 
+                        initial_confidence = 0.0
+                        existing_first_mapping = national_material.cpse_mappings.first()
+                        if not existing_first_mapping:
+                            initial_confidence = 100.0
+                        else:
+                            anchor_mat = existing_first_mapping.material
+                            match = MaterialMatch.objects.filter(
+                                (Q(material_a=material, material_b=anchor_mat) | Q(material_b=material, material_a=anchor_mat))
+                            ).first()
+                            if match:
+                                initial_confidence = round(match.final_score * 100, 2)
+
                         _, mapping_created = (
                             NationalMaterialMapping.objects
                             .get_or_create(
@@ -277,7 +292,7 @@ class Command(BaseCommand):
                                     national_material,
                                 material=material,
                                 defaults={
-                                    "mapping_confidence": 0.0,
+                                    "mapping_confidence": initial_confidence,
                                 },
                             )
                         )

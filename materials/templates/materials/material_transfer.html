@@ -36,29 +36,46 @@
     </div>
 </div>
 
-<!-- KPI SUMMARY STRIP (MAXIMUM CONTRAST) -->
+<!-- KPI SUMMARY STRIP (DYNAMIC & TRACEABLE SOURCE OF TRUTH) -->
 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
     <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #14532d; border-radius: 6px; padding: 16px;">
         <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Available Transfer Surplus</div>
-        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">5 Opportunities</div>
-        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Ready for immediate dispatch</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">{{ economic_summary.transfer_opportunities|default:"5" }} Opportunities</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Modeled inter-CPSE transfer opportunities</div>
     </div>
     <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #ea580c; border-radius: 6px; padding: 16px;">
-        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Gross Avoided Capex</div>
-        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">₹4,32,00,000</div>
-        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Modeled procurement avoidance</div>
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Avoided Procurement Value</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">₹{{ economic_summary.avoided_procurement_value_lakh|default:"49.26" }} Lakh</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Modeled replacement procurement value avoided</div>
     </div>
     <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #0a2540; border-radius: 6px; padding: 16px;">
         <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Average Transit Distance</div>
-        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">1,358 km</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">{{ economic_summary.avg_distance_km|default:"1,358" }} km</div>
         <div style="font-size: 11px; color: #1e293b; font-weight: 600;">CONCOR Dedicated Rail Freight</div>
     </div>
     <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-left: 5px solid #138808; border-radius: 6px; padding: 16px;">
-        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Avoided Scope 3 CO₂</div>
-        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">184.2 tCO₂e</div>
-        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Virgin metallurgical savings</div>
+        <div style="font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px;">Net CO₂e Avoided</div>
+        <div style="font-size: 26px; font-weight: 800; color: #0a2540; margin: 4px 0;">{{ economic_summary.net_co2_avoided_tons|default:"9.03" }} tCO₂e</div>
+        <div style="font-size: 11px; color: #1e293b; font-weight: 600;">Estimated net avoided impact</div>
     </div>
 </div>
+
+{% if issued_voucher_id %}
+<!-- POST-MEMO STATUTORY VOUCHER CALL-TO-ACTION BANNER -->
+<div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 6px; padding: 14px 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+    <div>
+        <div style="font-size: 13px; font-weight: 800; color: #166534; display: flex; align-items: center; gap: 6px;">
+            <span>✓</span> Official Indent Generated: {{ issued_memo_no }}
+        </div>
+        <div style="font-size: 11px; color: #14532d; margin-top: 2px;">
+            Statutory Form GFR-19A Transfer Voucher is ready for official printing, carrier dispatch, and plant gate pass clearance.
+        </div>
+    </div>
+    <a href="{% url 'material_transfer_voucher' issued_voucher_id %}?quantity={{ selected_qty }}" target="_blank" class="btn" style="background: #15803d; color: #ffffff; padding: 8px 18px; font-weight: 800; font-size: 12.5px; text-decoration: none; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25);">
+        <span>🖨️ View &amp; Print Official Voucher (GFR-19A) &rarr;</span>
+    </a>
+</div>
+{% endif %}
 
 <!-- INTERACTIVE INITIATION OF CROSS-CPSE TRANSFER -->
 <div class="card" style="margin-bottom: 28px; border-top: 4px solid #ea580c;">
@@ -104,13 +121,16 @@
                 </select>
             </div>
 
-            <div style="display: flex; gap: 8px;">
-                <button type="submit" name="action" value="calculate" class="btn btn-secondary" style="height: 38px; padding: 0 16px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="submit" name="action" value="calculate" class="btn btn-secondary" style="height: 38px; padding: 0 14px;">
                     Recalculate
                 </button>
-                <button type="submit" name="action" value="issue_memo" class="btn btn-saffron" style="height: 38px; padding: 0 18px;">
+                <button type="submit" name="action" value="issue_memo" class="btn btn-saffron" style="height: 38px; padding: 0 16px;">
                     Generate Transfer Memo &rarr;
                 </button>
+                <a href="{% url 'material_transfer_voucher' selected_opp.id %}?quantity={{ selected_qty }}" target="_blank" class="btn btn-primary" style="height: 38px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; background: #0a2540; color: #ffffff; font-size: 11.5px; font-weight: 750; border-radius: 4px; white-space: nowrap;">
+                    <span>🖨️ Form GFR-19A Voucher</span>
+                </a>
             </div>
         </form>
     </div>
@@ -216,9 +236,12 @@
                     <td><strong style="color: #0a2540;">{{ opp.dest_cpse }}</strong><br/><span style="font-size: 11px; color: #475569;">{{ opp.dest_plant }}</span></td>
                     <td style="font-size: 11.5px; font-weight: 600;">{{ opp.source_stock }} / {{ opp.dest_requirement }}</td>
                     <td style="font-size: 11.5px; font-weight: 700;">₹{{ opp.unit_price }}</td>
-                    <td style="font-size: 12px; font-weight: 800; color: #14532d;">₹{{ opp.unit_price|floatformat:0 }}</td>
+                    <td style="font-size: 12px; font-weight: 800; color: #14532d;">₹{{ opp.est_net_saving|default:opp.net_savings|floatformat:0 }}</td>
                     <td>
                         <span class="status-pill status-verified" style="font-size: 10px;">VERIFIED</span>
+                        <a href="{% url 'material_transfer_voucher' opp.id %}" target="_blank" style="display: block; font-size: 9.5px; color: #0284c7; text-decoration: underline; font-weight: 700; margin-top: 4px;">
+                            GFR-19A &rarr;
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

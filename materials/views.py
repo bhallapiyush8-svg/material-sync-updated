@@ -129,11 +129,14 @@ def home_portal(request):
         },
     ]
 
-    # High-impact authentic government figures
+    # High-impact authentic government figures dynamically derived from transfer economic summary
+    from .advanced_views import get_transfer_economic_summary
+    economic_summary = get_transfer_economic_summary()
+
     participating_psus_count = cpses.count() or 6
     matches_count = total_matches if total_matches > 0 else 1248
-    estimated_cost_avoidance_cr = "48.50"
-    carbon_avoided_tons = "184.2"
+    estimated_cost_avoidance_cr = economic_summary["surplus_inventory_value_cr"]
+    carbon_avoided_tons = str(economic_summary["net_co2_avoided_tons"])
 
     return render(
         request,
@@ -152,6 +155,7 @@ def home_portal(request):
             "estimated_cost_avoidance_cr": estimated_cost_avoidance_cr,
             "co2_avoided_tons": carbon_avoided_tons,
             "carbon_avoided_tons": carbon_avoided_tons,
+            "economic_summary": economic_summary,
             "benchmark_cases": benchmark_cases,
             "official_circulars": official_circulars,
         },
@@ -164,7 +168,9 @@ def home_portal(request):
 
 def about_view(request):
     """Renders the statutory background and SIH problem statement context."""
-    return render(request, "materials/about.html")
+    from .advanced_views import get_transfer_economic_summary
+    economic_summary = get_transfer_economic_summary()
+    return render(request, "materials/about.html", {"economic_summary": economic_summary})
 
 
 # =========================================================
@@ -177,8 +183,9 @@ def material_transfer_view(request):
     Enables one CPSE to request allocation of verified equivalent surplus
     from another CPSE, calculating freight costs and avoided purchase capex.
     """
-    from .advanced_views import CPSE_INVENTORY_POOL, calculate_savings_model
+    from .advanced_views import CPSE_INVENTORY_POOL, calculate_savings_model, get_transfer_economic_summary
     
+    economic_summary = get_transfer_economic_summary()
     selected_id = request.POST.get("opportunity_id") or "INV-001"
     try:
         qty = int(request.POST.get("quantity", 0))
@@ -189,12 +196,15 @@ def material_transfer_view(request):
     selected_qty = qty if qty and qty > 0 else min(selected_opp["source_stock"], selected_opp["dest_requirement"])
     
     transfer_calc = calculate_savings_model(selected_id, selected_qty)
+    issued_memo_no = None
+    issued_voucher_id = None
 
     if request.method == "POST" and request.POST.get("action") == "issue_memo":
-        memo_no = f"DPE/TR/{datetime.now().strftime('%Y%m%d')}/{selected_id}"
+        issued_voucher_id = selected_id
+        issued_memo_no = f"DPE/TR/{datetime.now().strftime('%Y%m%d')}/{selected_id}"
         messages.success(
             request,
-            f"Inter-CPSE Material Transfer Indent Generated successfully! File Reference: {memo_no}. "
+            f"Inter-CPSE Material Transfer Indent Generated successfully! File Reference: {issued_memo_no}. "
             f"Notification dispatched to {selected_opp['source_cpse']} Materials Management & {selected_opp['dest_cpse']} Procurement Directorate."
         )
 
@@ -202,12 +212,77 @@ def material_transfer_view(request):
         request,
         "materials/material_transfer.html",
         {
-            "opportunities": CPSE_INVENTORY_POOL,
+            "opportunities": economic_summary["item_summaries"],
             "selected_opp": selected_opp,
             "selected_qty": selected_qty,
             "transfer_calc": transfer_calc,
+            "economic_summary": economic_summary,
+            "issued_memo_no": issued_memo_no,
+            "issued_voucher_id": issued_voucher_id,
         },
     )
+
+
+def material_transfer_voucher_view(request, opportunity_id):
+    """
+    Official Inter-CPSE Material Transfer Voucher (Form GFR-19A / DPE Order 2026).
+    Printable & PDF-ready statutory transfer order for inter-enterprise surplus rationalization.
+    """
+    from .advanced_views import CPSE_INVENTORY_POOL, calculate_savings_model
+    
+    selected_opp = next((item for item in CPSE_INVENTORY_POOL if item["id"] == opportunity_id), None)
+    if not selected_opp:
+        selected_opp = CPSE_INVENTORY_POOL[0]
+        
+    try:
+        qty_param = int(request.GET.get("quantity") or request.POST.get("quantity") or 0)
+    except (ValueError, TypeError):
+        qty_param = 0
+        
+    selected_qty = qty_param if qty_param > 0 else min(selected_opp["source_stock"], selected_opp["dest_requirement"])
+    carrier = request.GET.get("carrier") or request.POST.get("carrier") or "CONCOR (Dedicated Rail Freight)"
+    transfer_calc = calculate_savings_model(selected_opp["id"], selected_qty)
+    
+    hsn_map = {
+        "FASTENERS": "7318.15.00",
+        "VALVES": "8481.80.30",
+        "PIPING": "7304.41.00",
+        "BEARINGS": "8482.10.10",
+        "ELECTRICAL": "8504.40.90",
+    }
+    hsn_code = hsn_map.get(selected_opp.get("category", "FASTENERS"), "7318.15.00")
+    
+    gstin_map = {
+        "ONGC": "24AAAC001001Z1 (Gujarat GST Authority)",
+        "NTPC": "36AAAC004401Z5 (Telangana GST Authority)",
+        "IOCL": "06AAAC002388Z8 (Haryana GST Authority)",
+        "BPCL": "32AAAC007712Z2 (Kerala GST Authority)",
+        "SAIL": "22AAAC003101Z3 (Chhattisgarh GST Authority)",
+        "BHEL": "33AAAC002201Z9 (Tamil Nadu GST Authority)",
+        "GAIL": "09AAAC005501Z7 (Uttar Pradesh GST Authority)",
+    }
+    
+    voucher_no = f"DPE/GFR-19A/{datetime.now().strftime('%Y')}/{selected_opp['id']}-{selected_opp['source_cpse']}{selected_opp['dest_cpse']}"
+    e_office_ref = f"E-OFFICE/DPE/LOG-{datetime.now().strftime('%Y')}/7791/N-14"
+    
+    hash_raw = f"{voucher_no}|{selected_opp['material_code']}|{selected_qty}|{transfer_calc['net_savings']}"
+    audit_hash = "sha256:" + hashlib.sha256(hash_raw.encode("utf-8")).hexdigest()
+    
+    context = {
+        "opp": selected_opp,
+        "qty": selected_qty,
+        "carrier": carrier,
+        "calc": transfer_calc,
+        "voucher_no": voucher_no,
+        "e_office_ref": e_office_ref,
+        "audit_hash": audit_hash,
+        "hsn_code": hsn_code,
+        "source_gstin": gstin_map.get(selected_opp["source_cpse"], "24AAAC000000Z1"),
+        "dest_gstin": gstin_map.get(selected_opp["dest_cpse"], "36AAAC000000Z2"),
+        "today_str": datetime.now().strftime("%d-%b-%Y"),
+        "eway_bill_no": f"EWB-9104-{abs(hash(voucher_no)) % 10000:04d}-{abs(hash(e_office_ref)) % 10000:04d}",
+    }
+    return render(request, "materials/transfer_voucher.html", context)
 
 
 
@@ -267,10 +342,9 @@ def dashboard(request):
     # Recent Audit Activities
     recent_logs = AuditLog.objects.order_by("-created_at")[:6]
 
-    # Modelled savings dynamically derived from mapped master entries
-    # Average capex avoidance estimated at Rs 27 Lakh per consolidated material group
-    dynamic_savings_cr = f"{(total_mappings * 2700000) / 10000000:.2f}"
-    dynamic_co2_tons = f"{total_mappings * 11.5:.1f}"
+    # Centralized single source of truth for the transfer & savings economic model
+    from .advanced_views import get_transfer_economic_summary
+    economic_summary = get_transfer_economic_summary()
 
     return render(
         request,
@@ -294,8 +368,9 @@ def dashboard(request):
             "cpse_count": cpse_count,
             "high_confidence_count": high_confidence_count,
             "approval_progress": approval_progress,
-            "estimated_savings_cr": dynamic_savings_cr,
-            "co2_avoided_tons": dynamic_co2_tons,
+            "estimated_savings_cr": economic_summary["surplus_inventory_value_cr"],
+            "co2_avoided_tons": str(economic_summary["net_co2_avoided_tons"]),
+            "economic_summary": economic_summary,
             "cpse_breakdown": cpse_breakdown,
             "recent_logs": recent_logs,
         },
@@ -924,11 +999,72 @@ def national_material_detail(request, material_id):
         id=material_id,
     )
 
-    mappings = (
+    mappings = list(
         national_material.cpse_mappings
         .select_related("material", "material__cpse")
         .all()
     )
+
+    group_materials = [m.material for m in mappings]
+    anchor_material = mappings[0].material if mappings else None
+
+    for m in mappings:
+        mat = m.material
+        if mat == anchor_material:
+            m.is_anchor = True
+            m.reference_code = "Canonical Reference Standard"
+            m.reference_item = f"Self ({mat.cpse.code}:{mat.material_code} Baseline Anchor)"
+            peer_matches = MaterialMatch.objects.filter(
+                (Q(material_a=mat, material_b__in=group_materials) | Q(material_b=mat, material_a__in=group_materials)) & ~Q(material_a=mat, material_b=mat)
+            )
+            if peer_matches.exists():
+                scores = [pm.final_score * 100 for pm in peer_matches]
+                sem_scores = [pm.semantic_score * 100 for pm in peer_matches]
+                attr_scores = [pm.attribute_score * 100 for pm in peer_matches]
+                m.consensus_score = round(sum(scores) / len(scores), 2)
+                m.harmonization_score = 100.0
+                m.semantic_score = round(sum(sem_scores) / len(sem_scores), 2)
+                m.attribute_score = round(sum(attr_scores) / len(attr_scores), 2)
+                m.critical_mismatch = any(pm.critical_mismatch for pm in peer_matches)
+                m.classification = "IDENTICAL (BASELINE)"
+                m.has_evidence = True
+            else:
+                m.consensus_score = 100.0
+                m.harmonization_score = 100.0
+                m.semantic_score = 100.0
+                m.attribute_score = 100.0
+                m.critical_mismatch = False
+                m.classification = "CANONICAL_BASELINE"
+                m.has_evidence = True
+        else:
+            match = MaterialMatch.objects.filter(
+                Q(material_a=mat, material_b=anchor_material) | Q(material_b=mat, material_a=anchor_material)
+            ).first()
+            if not match:
+                peer_matches = MaterialMatch.objects.filter(
+                    (Q(material_a=mat, material_b__in=group_materials) | Q(material_b=mat, material_a__in=group_materials)) & ~Q(material_a=mat, material_b=mat)
+                )
+                if peer_matches.exists():
+                    match = max(peer_matches, key=lambda x: x.final_score)
+            if match:
+                peer = match.material_b if match.material_a == mat else match.material_a
+                m.is_anchor = False
+                m.harmonization_score = round(match.final_score * 100, 2)
+                m.semantic_score = round(match.semantic_score * 100, 2)
+                m.attribute_score = round(match.attribute_score * 100, 2)
+                m.critical_mismatch = match.critical_mismatch
+                m.classification = match.classification
+                m.reference_code = f"{peer.cpse.code}:{peer.material_code}"
+                m.reference_item = f"{peer.cpse.code} — {peer.material_code} ({peer.description})"
+                m.has_evidence = True
+            else:
+                m.is_anchor = False
+                m.harmonization_score = None
+                m.has_evidence = False
+
+        if m.has_evidence and m.mapping_confidence == 0.0 and m.harmonization_score is not None:
+            m.mapping_confidence = m.harmonization_score
+            m.save(update_fields=["mapping_confidence"])
 
     source_materials = [m.material for m in mappings]
     groups = (
@@ -943,6 +1079,9 @@ def national_material_detail(request, material_id):
         .order_by("-created_at")
     )
 
+    valid_scores = [m.harmonization_score for m in mappings if m.has_evidence and m.harmonization_score is not None]
+    cluster_harmonization_score = round(sum(valid_scores) / len(valid_scores), 1) if valid_scores else None
+
     return render(
         request,
         "materials/national_material_detail.html",
@@ -951,6 +1090,7 @@ def national_material_detail(request, material_id):
             "mappings": mappings,
             "groups": groups,
             "approval_history": approval_history,
+            "cluster_harmonization_score": cluster_harmonization_score,
         },
     )
 
@@ -1053,6 +1193,10 @@ def group_detail(request, group_id):
             })
 
     match_rows.sort(key=lambda row: row["final_score"], reverse=True)
+    cluster_confidence = round(sum(row["final_score"] for row in match_rows) / len(match_rows), 1) if match_rows else 0.0
+    if group.confidence == 0.0 and cluster_confidence > 0.0:
+        group.confidence = cluster_confidence
+        group.save(update_fields=["confidence"])
 
     return render(
         request,
@@ -1061,6 +1205,7 @@ def group_detail(request, group_id):
             "group": group,
             "proposed_national": proposed_national,
             "match_rows": match_rows,
+            "cluster_confidence": cluster_confidence,
         },
     )
 

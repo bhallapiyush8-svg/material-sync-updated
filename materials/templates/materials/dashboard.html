@@ -42,30 +42,41 @@
 </div>
 
 <!-- REAL FINANCIAL & OPERATIONAL KPIS -->
-<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
-    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-navy-primary); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
-        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Target Surplus Spares</div>
-        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">₹48.50 Cr</div>
-        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">{{ material_count|default:"1,248" }} registered items</div>
+<!-- REAL FINANCIAL & OPERATIONAL KPIS (DYNAMIC & TRACEABLE SOURCE OF TRUTH) -->
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 8px;">
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-navy-primary); border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Target Surplus Spares</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">₹{{ economic_summary.surplus_inventory_value_cr|default:"1.47" }} Cr</div>
+        <div style="font-size: 11px; color: var(--gov-text-body); font-weight: 500;">Based on modeled source surplus inventory</div>
     </div>
 
-    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-green); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
-        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Direct Avoided Capex</div>
-        <div style="font-size: 26px; font-weight: 700; color: #166534; margin: 4px 0;">₹4,32,00,000</div>
-        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">34 inter-CPSE transfers completed</div>
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid #0284c7; border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Avoided Procurement Value</div>
+        <div style="font-size: 24px; font-weight: 700; color: #0369a1; margin: 4px 0;">₹{{ economic_summary.avoided_procurement_value_lakh|default:"49.26" }} Lakh</div>
+        <div style="font-size: 11px; color: var(--gov-text-body); font-weight: 500;">Simulated replacement procurement value</div>
     </div>
 
-    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-saffron-dark); border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
-        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Active CPSE Reallocations</div>
-        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">5 Shipments</div>
-        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">CONCOR Dedicated Rail Transit</div>
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-saffron-dark); border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Transfer Opportunities</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">{{ economic_summary.transfer_opportunities|default:"5" }}</div>
+        <div style="font-size: 11px; color: var(--gov-text-body); font-weight: 500;">Modeled inter-CPSE opportunities</div>
     </div>
 
-    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid #138808; border-radius: 4px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
-        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Scope 3 CO₂ Avoided</div>
-        <div style="font-size: 26px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">184.2 tCO₂e</div>
-        <div style="font-size: 11.5px; color: var(--gov-text-body); font-weight: 500;">Virgin metallurgy saved</div>
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid var(--gov-green); border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Net Potential Savings</div>
+        <div style="font-size: 24px; font-weight: 700; color: #166534; margin: 4px 0;">₹{{ economic_summary.net_savings_lakh|default:"48.91" }} Lakh</div>
+        <div style="font-size: 11px; color: var(--gov-text-body); font-weight: 500;">Avoided procurement less modeled logistics</div>
     </div>
+
+    <div style="background: #ffffff; border: 1px solid var(--gov-border); border-top: 3px solid #138808; border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,42,85,0.03);">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gov-text-muted); letter-spacing: 0.5px;">Net CO₂e Avoided</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--gov-navy-primary); margin: 4px 0;">{{ economic_summary.net_co2_avoided_tons|default:"9.03" }} tCO₂e</div>
+        <div style="font-size: 11px; color: var(--gov-text-body); font-weight: 500;">Estimated net avoided impact</div>
+    </div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 11px; color: var(--gov-text-muted);">
+    <span>Data Scope: {{ material_count|default:"1,248" }} registered items across Maharatna/Navratna CPSEs</span>
+    <span class="data-honesty-banner" style="font-size: 10.5px; padding: 2px 8px;">Representative synthetic demo scenario &bull; Traceable backend calculation</span>
 </div>
 
 <!-- OPERATIONAL WORKFLOW HUBS -->
@@ -118,6 +129,41 @@
             </div>
             <div style="margin-top: 12px; font-size: 11.5px; font-weight: 700; color: var(--gov-navy-primary);">Inspect Audit Trail &rarr;</div>
         </a>
+    </div>
+</div>
+
+<!-- STATUTORY CENTRAL TENDER SURVEILLANCE & RECONCILIATION RADAR (RULE 149 GFR) -->
+<div style="background: #ffffff; border: 1.5px solid #fed7aa; border-left: 5px solid #ea580c; border-radius: 4px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(11, 42, 85, 0.04);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px;">🏛️</span>
+            <span style="font-size: 11.5px; font-weight: 850; text-transform: uppercase; color: #9a3412; letter-spacing: 0.5px;">
+                Central Tender Surveillance &amp; Capital Reconciliation
+            </span>
+            <span style="font-size: 9.5px; font-weight: 800; background: #fee2e2; color: #991b1b; padding: 1.5px 6px; border-radius: 3px; border: 1px solid #fecaca; text-transform: uppercase;">
+                Rule 149(viii) GFR Exception Flagged
+            </span>
+        </div>
+        <span style="font-size: 10.5px; color: #64748b; font-weight: 600;">
+            GeM Tender Notice: <strong>#GEM/2026/B/8821</strong> &bull; Requisitioner: <strong>NTPC Limited (Dadri Station)</strong>
+        </span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="font-size: 12px; color: #1e293b; line-height: 1.55; flex: 1; min-width: 320px;">
+            NTPC Dadri initiated fresh procurement for <strong>400 units SS304 Hex Bolts M10x50</strong> (Est. Capex: <strong>₹2.40 Lakh</strong>). 
+            Surveillance detected <strong>IOCL Panipat holds 650 verified surplus units</strong> (idling &gt; 410 days). 
+            Fresh procurement kept in abeyance pending inter-enterprise surplus absorption under DPE Circular 2026.
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+            <div style="text-align: right;">
+                <div style="font-size: 10px; font-weight: 750; color: #166534; text-transform: uppercase;">Avoided Public Outlay</div>
+                <div style="font-size: 15px; font-weight: 850; color: #14532d;">₹2.10 Lakh</div>
+            </div>
+            <a href="{% url 'material_transfer' %}" class="btn btn-saffron" style="font-size: 11.5px; padding: 6px 14px; font-weight: 800; text-decoration: none; border-radius: 4px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(234, 88, 12, 0.25);">
+                <span>Review Allocation Indent &rarr;</span>
+            </a>
+        </div>
     </div>
 </div>
 

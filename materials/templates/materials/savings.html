@@ -22,27 +22,27 @@
     </div>
 </div>
 
-<!-- EXECUTIVE SAVINGS KPI BANNER -->
+<!-- EXECUTIVE SAVINGS KPI BANNER (DYNAMIC & TRACEABLE SOURCE OF TRUTH) -->
 <div class="kpi-strip">
     <div class="kpi-card accent-green">
         <div class="kpi-label">
-            <span>Total Avoided Capex</span>
+            <span>Total Surplus Inventory Value</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div class="kpi-value">₹{{ total_avoided_pool|floatformat:0 }}</div>
+        <div class="kpi-value">₹{{ economic_summary.surplus_inventory_value_cr|default:"1.47" }} Cr</div>
         <div class="kpi-footer-note">
-            <span>Across pooled CPSE inventory surplus</span>
+            <span>Based on modeled source surplus inventory</span>
         </div>
     </div>
 
     <div class="kpi-card accent-green">
         <div class="kpi-label">
-            <span>Net Financial Savings</span>
+            <span>Net Potential Savings</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </div>
-        <div class="kpi-value">₹{{ total_potential_savings|floatformat:0 }}</div>
+        <div class="kpi-value">₹{{ economic_summary.net_savings_lakh|default:"48.91" }} Lakh</div>
         <div class="kpi-footer-note">
-            <span style="color: var(--green-verified); font-weight: 700;">After logistics & freight cost</span>
+            <span style="color: var(--green-verified); font-weight: 700;">Avoided procurement less modeled transfer logistics</span>
         </div>
     </div>
 
@@ -51,9 +51,9 @@
             <span>Net CO₂ Avoided</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
         </div>
-        <div class="kpi-value">{{ total_co2_pool }} <span style="font-size: 14px; font-weight: 700; color: var(--slate-500);">tCO₂e</span></div>
+        <div class="kpi-value">{{ economic_summary.net_co2_avoided_tons|default:"9.03" }} <span style="font-size: 14px; font-weight: 700; color: var(--slate-500);">tCO₂e</span></div>
         <div class="kpi-footer-note">
-            <span>Avoided virgin metallurgical refining</span>
+            <span>Estimated net avoided impact (virgin alloy minus transport)</span>
         </div>
     </div>
 
@@ -243,10 +243,10 @@
                         {{ item.distance_km }} km
                     </td>
                     <td style="font-weight: 800; color: var(--green-verified); font-size: 12px;">
-                        ₹{% widthratio item.dest_requirement 1 item.unit_price %}
+                        ₹{{ item.avoided_purchase|default:item.dest_requirement|floatformat:0 }}
                     </td>
                     <td style="font-weight: 750; color: var(--slate-700); font-size: 11px;">
-                        🌿 ~{{ item.dest_requirement|floatformat:0 }} kg eq.
+                        🌿 {{ item.net_co2_avoided_tons|default:"0.10" }} tCO₂e
                     </td>
                     <td style="text-align: right;">
                         <a href="{% url 'savings' %}?item={{ item.id }}" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 10.5px;">

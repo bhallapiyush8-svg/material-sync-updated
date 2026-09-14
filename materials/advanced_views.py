@@ -488,9 +488,9 @@ CPSE_INVENTORY_POOL = [
 def calculate_savings_model(transfer_item_id: str = None, custom_qty: int = None):
     """
     Calculates detailed financial and carbon savings for inter-CPSE transfers.
-    Formula:
+    Formula (Representative synthetic demo scenario):
       - Avoided Purchase = transfer_qty * dest_unit_price
-      - Transport Cost = fixed_base (₹2,500) + (distance_km * total_weight_tons * ₹4.20/ton-km)
+      - Transport Cost = fixed_base (₹2,500) + (distance_km * total_weight_tons * ₹4.50/ton-km)
       - Net Financial Savings = Avoided Purchase - Transport Cost
       - Avoided Virgin Metal CO₂ = total_weight_kg * 2.89 kg CO₂e/kg
       - Transport CO₂ = total_weight_tons * distance_km * 0.092 kg CO₂e/ton-km
@@ -507,13 +507,13 @@ def calculate_savings_model(transfer_item_id: str = None, custom_qty: int = None
 
     avoided_purchase = transfer_qty * selected_item["unit_price"]
     total_weight_kg = transfer_qty * selected_item["weight_per_unit_kg"]
-    total_weight_tons = max(0.05, total_weight_kg / 1000.0)
+    total_weight_tons = total_weight_kg / 1000.0
 
     freight_rate_per_ton_km = 4.50
     transport_cost = round(2500 + (selected_item["distance_km"] * total_weight_tons * freight_rate_per_ton_km), 2)
     net_savings = max(0.0, avoided_purchase - transport_cost)
 
-    # Carbon calculations
+    # Carbon calculations (representative demo assumptions)
     avoided_manufacturing_co2_kg = total_weight_kg * 2.89  # Stainless / Engineering Alloy emissions factor
     transport_emissions_co2_kg = total_weight_tons * selected_item["distance_km"] * 0.092
     net_co2_avoided_tons = round(max(0.0, (avoided_manufacturing_co2_kg - transport_emissions_co2_kg) / 1000.0), 3)
@@ -528,6 +528,83 @@ def calculate_savings_model(transfer_item_id: str = None, custom_qty: int = None
         "distance_km": selected_item["distance_km"],
         "co2_avoided_tons": net_co2_avoided_tons,
         "all_opportunities": CPSE_INVENTORY_POOL,
+    }
+
+
+def get_transfer_economic_summary():
+    """
+    Centralized single source of truth for the Inter-CPSE Transfer & Savings economic model.
+    Dynamically computes aggregated metrics across CPSE_INVENTORY_POOL:
+      - surplus_inventory_value: SUM(source_stock * unit_price)
+      - avoided_procurement_value: SUM(dest_requirement * unit_price)
+      - transport_cost: SUM(2500 + distance_km * weight_tons * 4.50)
+      - net_savings: avoided_procurement_value - transport_cost
+      - transfer_opportunities: count of items in CPSE_INVENTORY_POOL (5)
+      - gross_manufacturing_co2_tons: SUM(weight_kg * 2.89) / 1000
+      - transport_co2_tons: SUM(weight_tons * distance_km * 0.092) / 1000
+      - net_co2_avoided_tons: gross_manufacturing_co2_tons - transport_co2_tons
+      - avg_distance_km: average transit distance across routes
+      - item_summaries: list of detailed per-item calculations
+    """
+    surplus_inventory_value = sum(item["source_stock"] * item["unit_price"] for item in CPSE_INVENTORY_POOL)
+    avoided_procurement_value = sum(item["dest_requirement"] * item["unit_price"] for item in CPSE_INVENTORY_POOL)
+
+    freight_rate_per_ton_km = 4.50
+    fixed_base_freight = 2500.0
+
+    item_summaries = []
+    total_transport_cost = 0.0
+    total_net_savings = 0.0
+    total_gross_co2_kg = 0.0
+    total_transport_co2_kg = 0.0
+    total_distance_km = 0
+
+    for item in CPSE_INVENTORY_POOL:
+        req_qty = min(item["source_stock"], item["dest_requirement"])
+        avoided_purchase = req_qty * item["unit_price"]
+        total_weight_kg = req_qty * item["weight_per_unit_kg"]
+        total_weight_tons = total_weight_kg / 1000.0
+
+        item_transport_cost = round(fixed_base_freight + (item["distance_km"] * total_weight_tons * freight_rate_per_ton_km), 2)
+        item_net_savings = max(0.0, avoided_purchase - item_transport_cost)
+
+        mfg_co2_kg = total_weight_kg * 2.89
+        item_trans_co2_kg = total_weight_tons * item["distance_km"] * 0.092
+        item_net_co2_tons = round(max(0.0, (mfg_co2_kg - item_trans_co2_kg) / 1000.0), 3)
+
+        total_transport_cost += item_transport_cost
+        total_net_savings += item_net_savings
+        total_gross_co2_kg += mfg_co2_kg
+        total_transport_co2_kg += item_trans_co2_kg
+        total_distance_km += item["distance_km"]
+
+        item_dict = dict(item)
+        item_dict["transfer_qty"] = req_qty
+        item_dict["avoided_purchase"] = avoided_purchase
+        item_dict["transport_cost"] = item_transport_cost
+        item_dict["net_savings"] = item_net_savings
+        item_dict["est_net_saving"] = item_net_savings
+        item_dict["total_weight_kg"] = round(total_weight_kg, 2)
+        item_dict["net_co2_avoided_tons"] = item_net_co2_tons
+        item_summaries.append(item_dict)
+
+    net_co2_avoided_tons = round(max(0.0, (total_gross_co2_kg - total_transport_co2_kg) / 1000.0), 2)
+    avg_distance_km = round(total_distance_km / len(CPSE_INVENTORY_POOL)) if CPSE_INVENTORY_POOL else 0
+
+    return {
+        "surplus_inventory_value": surplus_inventory_value,
+        "surplus_inventory_value_cr": f"{surplus_inventory_value / 10000000:.2f}",
+        "avoided_procurement_value": avoided_procurement_value,
+        "avoided_procurement_value_lakh": f"{avoided_procurement_value / 100000:.2f}",
+        "transport_cost": round(total_transport_cost, 2),
+        "net_savings": round(total_net_savings, 2),
+        "net_savings_lakh": f"{total_net_savings / 100000:.2f}",
+        "transfer_opportunities": len(CPSE_INVENTORY_POOL),
+        "gross_co2_tons": round(total_gross_co2_kg / 1000.0, 2),
+        "transport_co2_tons": round(total_transport_co2_kg / 1000.0, 2),
+        "net_co2_avoided_tons": net_co2_avoided_tons,
+        "avg_distance_km": avg_distance_km,
+        "item_summaries": item_summaries,
     }
 
 
@@ -911,16 +988,8 @@ def savings_view(request):
 
     savings_data = calculate_savings_model(selected_id, custom_qty)
 
-    # Compute overall pool totals for executive aggregate view
-    total_avoided_pool = sum(item["source_stock"] * item["unit_price"] for item in CPSE_INVENTORY_POOL)
-    total_potential_savings = sum(
-        max(0, (item["dest_requirement"] * item["unit_price"]) - (2500 + item["distance_km"] * (item["dest_requirement"] * item["weight_per_unit_kg"] / 1000) * 4.5))
-        for item in CPSE_INVENTORY_POOL
-    )
-    total_co2_pool = sum(
-        (item["dest_requirement"] * item["weight_per_unit_kg"] * 2.89) / 1000.0
-        for item in CPSE_INVENTORY_POOL
-    )
+    # Centralized single source of truth for the transfer & savings economic model
+    economic_summary = get_transfer_economic_summary()
 
     return render(
         request,
@@ -928,10 +997,11 @@ def savings_view(request):
         {
             "savings": savings_data,
             "selected_id": selected_id,
-            "total_avoided_pool": total_avoided_pool,
-            "total_potential_savings": total_potential_savings,
-            "total_co2_pool": round(total_co2_pool, 1),
-            "inventory_pool": CPSE_INVENTORY_POOL,
+            "economic_summary": economic_summary,
+            "total_avoided_pool": economic_summary["surplus_inventory_value"],
+            "total_potential_savings": economic_summary["net_savings"],
+            "total_co2_pool": economic_summary["net_co2_avoided_tons"],
+            "inventory_pool": economic_summary["item_summaries"],
         },
     )
 

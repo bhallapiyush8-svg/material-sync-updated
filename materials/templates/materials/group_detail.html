@@ -47,7 +47,7 @@
             {{ group.candidate_description }}
         </div>
         <div style="display: flex; gap: 20px; font-size: 12px; color: var(--slate-600);">
-            <div>Group Cluster Confidence: <strong style="color: var(--green-verified);">{{ group.confidence|floatformat:1 }}%</strong></div>
+            <div>Group Cluster Confidence: <strong style="color: var(--green-verified);">{{ cluster_confidence|default:group.confidence|floatformat:1 }}%</strong></div>
             <div>Cluster Members: <strong>{{ group.members.count }} CPSE Items</strong></div>
             {% if proposed_national %}
                 <div>Linked Master Code: <a href="{% url 'national_material_detail' proposed_national.id %}" class="code-snippet" style="color: var(--blue-primary);">{{ proposed_national.national_code }}</a></div>
